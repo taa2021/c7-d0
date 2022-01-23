@@ -1,0 +1,49 @@
+variable "yc_iam_token" {
+  description = "Yandex.Cloud IAM-token for the provider auth. Attention: don't set directly in a tracked git-file"
+
+  type      = string
+  sensitive = true
+}
+
+variable "yc_zone" {
+  description = "Yandex.Cloud zone default"
+
+  type    = string
+  default = "ru-central1-a"
+}
+
+variable "yc_cloud_id" {
+  description = "Yandex.Cloud ID default"
+
+  type    = string
+  default = "b1gjilr27b0mqp90rj46"
+}
+
+variable "yc_folder_id" {
+  description = "Yandex.Cloud Folder ID default"
+
+  type    = string
+  default = "b1gjo8k8qajfr6ftho2n"
+}
+
+variable "bucket-name" {
+  description = "The s3-storage bucket name"
+
+  type    = string
+  default = "tf--c2-br-7--2"
+}
+
+variable "is-bucket-versioning" {
+  description = "Predicate: is versioning enabled for the s3-storage bucket"
+
+  type    = bool
+  default = true
+}
+
+variable "cloud-tags" {
+  description = "The Terraform object's cloud tags/labels"
+
+  type    = map(any)
+  default = { terraform = true, environment = "dev" }
+}
+

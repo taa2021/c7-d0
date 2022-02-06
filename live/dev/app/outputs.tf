@@ -1,24 +1,18 @@
 
 output "hosts" {
-  description = "The deployed hosts' external IPv4 addresses (separated with '\\n')"
+  description = "The deployed hosts' internal IPv4 addresses (separated with '\\n')"
 
-  value = local.hosts-addr-ext
+  value = local.hosts-addr-int
 }
 
-output "hosts-port" {
-  description = "The deployed hosts' external TCP port"
+output "ehost" {
+  description = "The deployed border host's external IPv4 address"
 
-  value = local.hosts-port
+  value = local.host0-addr-ext
 }
 
-output "nlb" {
-  description = "The deployed network load balancer's external IPv4 address"
+output "ansible-inventory" {
+  description = "The ansible inventory file"
 
-  value = local.nlb-addr-ext
-}
-
-output "nlb-port" {
-  description = "The deployed network load balancer's external TCP port"
-
-  value = local.nlb-port
+  value = local.ansible-inventory
 }

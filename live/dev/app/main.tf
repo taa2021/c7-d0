@@ -3,7 +3,7 @@ terraform {
 
   backend "s3" {
     endpoint = "storage.yandexcloud.net"
-    bucket   = "tf--c2-br-7--2"
+    bucket   = "tf--c2-b6-pr6--0"
     region   = "ru-central1-a"
     key      = "dev/app/terraform.tfstate"
 
@@ -33,83 +33,134 @@ module "vpc-network" {
   cloud-tags = var.cloud-tags
 }
 
-#  The subnets for the deployable hosts
-module "vpc-subnets" {
+#  The subnet for the deployable hosts
+module "vpc-subnet" {
   source = "../../../modules/network/subnet"
-  count  = length(var.hosts)
 
-  cidr       = var.hosts[count.index].subnet
-  region     = var.hosts[count.index].region
+  cidr       = var.subnet
+  region     = var.yc_zone
   vpc-id     = module.vpc-network.id
   cloud-tags = var.cloud-tags
 }
 
-/*
-# The external reserved IPv4-addresses fo the deployable hosts
-module "vpc-ipv4eaddrs" {
-    source = "../../../modules/network/ipv4eaddr"
-    count = length(var.hosts)
-
-    region = var.hosts[count.index].region
-    cloud-tags = var.cloud-tags
-}
-*/
 
 # The deployable hosts
-module "web-servers" {
+module "hosts" {
   source = "../../../modules/compute/host"
   count  = length(var.hosts)
 
-  region       = var.hosts[count.index].region
-  subnet       = module.vpc-subnets[count.index].id
+  region       = var.yc_zone
+  subnet       = module.vpc-subnet.id
   image-family = var.hosts[count.index].image-family
   has-eaddr    = var.hosts[count.index].has-eaddr
+  login        = var.hosts[count.index].login
   ssh          = var.hosts[count.index].ssh
 
   cloud-tags = var.cloud-tags
 }
 
-# The deployable network load balancer
-module "nlb" {
-  source    = "../../../modules/network/nlb-simple-http"
-  hosts-ids = module.web-servers[*].id
+locals {
+  hosts-addr-int = join("\n", module.hosts[*].addr-int)
+  host0-addr-ext = module.hosts[0].addr-ext
+  host0-addr-int = module.hosts[0].addr-int
 
-  cloud-tags = var.cloud-tags
+  ansible-configs = [
+    {
+      src = "${path.module}/templates/inventory.tftpl"
+      dst = "${path.module}/conf/inventory"
+    },
+    {
+      src = "${path.module}/templates/bootstrap-bastion-0.yml.tfpl"
+      dst = "${path.module}/conf/bootstrap-bastion-0.yml"
+    },
+    {
+      src = "${path.module}/templates/bootstrap-bastion-1.yml.tfpl"
+      dst = "${path.module}/conf/bootstrap-bastion-1.yml"
+    },
+    {
+      src = "${path.module}/templates/bootstrap-bastion-2.yml.tfpl"
+      dst = "${path.module}/conf/bootstrap-bastion-2.yml"
+    },
+    {
+      src = "${path.module}/templates/bootstrap-bastion-3.yml.tfpl"
+      dst = "${path.module}/conf/bootstrap-bastion-3.yml"
+    },
+  ]
+
+  etc-configs = [
+    {
+      src = "${path.module}/templates/iptables-rules-v4.tfpl"
+      dst = "${path.module}/conf/iptables-rules-v4"
+    },
+    {
+      src = "${path.module}/templates/ssh-via-bastion.config.tfpl"
+      dst = "${path.module}/conf/ssh-via-bastion.config"
+    },
+    {
+      src = "${path.module}/templates/00-apt-proxy.conf.tfpl"
+      dst = "${path.module}/conf/roles/common/files/00-apt-proxy.conf"
+    },
+    {
+      src = "${path.module}/templates/common-vars-main.yml.tfpl"
+      dst = "${path.module}/conf/roles/common/vars/main.yml"
+    },
+
+  ]
 }
+
+resource "local_file" "ansible-configs" {
+  count = length(local.ansible-configs)
+  content = templatefile(local.ansible-configs[count.index].src, {
+    hosts    = module.hosts[*].addr-int,
+    bastion  = local.host0-addr-ext,
+    bastionl = local.host0-addr-int,
+    ulogin   = var.hosts[0].login,
+    subnet   = var.subnet,
+  })
+  file_permission = "0644"
+  filename        = local.ansible-configs[count.index].dst
+}
+
+resource "local_file" "etc-configs" {
+  count = length(local.etc-configs)
+  content = templatefile(local.etc-configs[count.index].src, {
+    hosts    = module.hosts[*].addr-int,
+    bastion  = local.host0-addr-ext,
+    bastionl = local.host0-addr-int,
+    ulogin   = var.hosts[0].login,
+    subnet   = var.subnet,
+  })
+  file_permission = "0644"
+  filename        = local.etc-configs[count.index].dst
+}
+
 
 locals {
-  hosts-addr-ext = join("\n", module.web-servers[*].addr-ext)
-  hosts-port     = module.nlb.port-inner
-  nlb-addr-ext   = module.nlb.addr-ext
-  nlb-port       = module.nlb.port-outer
+  ansible-inventory = resource.local_file.ansible-configs[0].filename
 }
 
+
+
+
 # The visual verification of deployment results
-resource "null_resource" "check-results" {
-  triggers = {
-    always_run = timestamp()
-  }
+resource "null_resource" "wait" {
+  provisioner "local-exec" { command = "sleep 180" }
+  depends_on = [
+    module.hosts,
+    local.ansible-configs,
+  ]
+}
+
+# The hosts' provision
+resource "null_resource" "provision" {
+  triggers = { always_run = timestamp() }
 
   provisioner "local-exec" {
-    interpreter = ["/bin/bash", "-c"]
-    command     = <<-EOT
-        echo "!!!-> `date` start checking..."
-
-        function webprint() {
-            descr=$1
-            addr=$2
-            port=$3
-            num=$4
-            seq $num | while read I; do
-                /usr/bin/echo -e "==================================\n`date` $${descr} addr: $${addr}"
-                curl -L http://$addr:$port 2>/dev/null | html2text |  grep -v "^$" | head -n 2
-            done
-        }
-
-        echo "${local.hosts-addr-ext}" | while read A; do webprint hst $A "${local.hosts-port}" 1; done;
-        echo "${local.nlb-addr-ext}"   | while read A; do webprint nlb $A "${local.nlb-port}"  10; done;
-
-        echo "!!!<- `date` end checking!"
-        EOT
+    command     = "--"
+    interpreter = concat(["ansible-playbook", "-i"], local.ansible-configs[*].dst)
   }
+
+  depends_on = [
+    null_resource.wait,
+  ]
 }

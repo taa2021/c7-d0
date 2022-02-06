@@ -1,0 +1,3 @@
+Acquire::http::proxy "http://${bastionl}:8888";
+Acquire::https::proxy "http://${bastionl}:8888";
+Acquire::ftp::proxy "http://${bastionl}:8888";

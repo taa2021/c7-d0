@@ -1,0 +1,24 @@
+---
+# Bootstrap ansible on management hosts
+
+- name: bootstrap ansible requirements for ansibled hosts
+  hosts: bastion
+  gather_facts: no
+  remote_user: ${ulogin}
+  become: false
+  tasks:
+    - name: install ansible-support packages
+      loop: "{{ groups['ansibled'] }}"
+      raw: |
+            ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no {{ item }} bash  <<-EOF
+            which python3 && echo "Installed" && exit 0
+            http_proxy=http://${bastionl}:8888; export http_proxy
+            https_proxy=http://${bastionl}:8888; export https_proxy
+            ftp_proxy=http://${bastionl}:8888; export ftp_proxy
+            HTTP_PROXY=http://${bastionl}:8888; export HTTP_PROXY
+            HTTPS_PROXY=http://${bastionl}:8888; export HTTPS_PROXY
+            FTP_PROXY=http://${bastionl}:8888; export FTP_PROXY
+            which dnf && sudo -E dnf makecache -y && sudo -E dnf install -y python3
+            which apt && sudo -E apt update -y    && sudo -E apt install -y python3
+            which python3 && echo "Installed" && exit 0
+            EOF

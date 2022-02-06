@@ -24,7 +24,7 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| bucket-name | The s3-storage bucket name | `string` | `"tf--c2-br-7--2"` | no |
+| bucket-name | The s3-storage bucket name | `string` | `"tf--c2-b6-pr6--0"` | no |
 | cloud-tags | The Terraform object's cloud tags/labels | `map(any)` | ```{ "environment": "dev", "terraform": true }``` | no |
 | is-bucket-versioning | Predicate: is versioning enabled for the s3-storage bucket | `bool` | `true` | no |
 | yc\_cloud\_id | Yandex.Cloud ID default | `string` | `"b1gjilr27b0mqp90rj46"` | no |

@@ -1,0 +1,25 @@
+---
+
+- name: app backend servers
+  hosts: ansibled
+  gather_facts: yes
+  remote_user: ruser0
+  become: yes
+  roles:
+    - common
+
+- name: app backend servers
+  hosts: app
+  gather_facts: yes
+  remote_user: ruser0
+  become: yes
+  roles:
+    - docker
+
+- name: database servers
+  hosts: database
+  gather_facts: yes
+  remote_user: ruser0
+  become: yes
+  roles:
+    - postgresql

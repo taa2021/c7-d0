@@ -31,7 +31,7 @@
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | cloud-tags | The Terraform object's cloud tags/labels | `map(any)` | `{}` | no |
-| cpu-fraq | The reserved share of processor (%) for the deployable host | `number` | `20` | no |
+| cpu-fraq | The reserved share of processor (%) for the deployable host | `number` | `5` | no |
 | has-eaddr | Predicate: is needed external Internet IP-address for the deployable host? | `bool` | `false` | no |
 | image-family | Cloud image family for the deployable host | `string` | n/a | yes |
 | is-preemptible | Predicate: is cheaper setup config with sudden shutdown for the deployable host? | `bool` | `true` | no |

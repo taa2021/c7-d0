@@ -1,0 +1,56 @@
+---
+# Bootstrap ansible on bastion
+
+- name: configure ansible on bastion
+  hosts: bastion
+  gather_facts: no
+  remote_user: ${ulogin}
+  become: true
+  tasks:
+    - name: install ansible
+      ansible.builtin.package:
+        name: ansible
+
+    - name: create iptables config directory
+      ansible.builtin.file:
+        name: /etc/iptables
+        state: directory
+        mode: 0755
+        owner: root
+        group: root
+
+    - name: copy iptables config
+      ansible.builtin.copy:
+        src: iptables-rules-v4
+        dest: /etc/iptables/rules.v4
+        mode: 0644
+        owner: root
+        group: root
+
+    - name: install iptables-persistent
+      ansible.builtin.package:
+        name: iptables-persistent
+
+    - name: configure backup resolver
+      ansible.builtin.lineinfile:
+        path: /etc/resolv.conf
+        state: present
+        regexp: "^nameserver 8.8.8.8"
+        line: "nameserver 8.8.8.8"
+
+    - name: install proxy
+      ansible.builtin.package:
+        name: tinyproxy
+
+    - name: configure proxy
+      ansible.builtin.lineinfile:
+        path: /etc/tinyproxy/tinyproxy.conf
+        state: present
+        regexp: "^Allow ${subnet}"
+        insertafter: "^Allow 127.0.0.1"
+        line: "Allow ${subnet}"
+
+    - name: enable proxy
+      ansible.builtin.service:
+        name: tinyproxy
+        state: restarted

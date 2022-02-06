@@ -1,12 +1,9 @@
-# B5.2.8 Итоговая практическая работа
+# C2.B6 Проектная работа 6. Управление конфигурациями (Ansible, Puppet)
 
 
 ## Задание
 
-Комплексная, протяженная формулировка задания приведена [здесь](./TASK.md).
-Ссылки на изначальные примеры решения подзадач оставлены преднамеренно -
-при решении изучались, но не использовались.
-
+Оригинальная формулировка задания приведена [здесь](./TASK.md).
 
 ## Примечания к решению
 
@@ -19,27 +16,61 @@
 только для проверки задания, а также о достаточности предоставления в качестве решения ссылки на репозиторий 
 (и дополнительных подтверждающих материалов).
 
-- При решении используемый для хранения состояний бекенд terraform на базе Я.Облака - AWS-совместимый,
-и в качестве бэкенд-решения для Terraform поддерживает версионирование, но не поддерживает блокировку,- 
-что необходимо учитывать при (многопользовательской) работе,
-а также необходимо учесть при внешнем контроле соблюдения лючших практик развернутой инфраструктуры
-(т.е. несоответствие best-practise в данном случае - для соответствия условиям задачи).
-При этом в Я.Облаке достаточно сложная система предоставления прав использования ресурсов
-без надлежащей документации, с противоречащими высказываниями в указанной документации.
-Поэтому - в учебных целях - не в ущерб "общим вопросам безопасности" bucket создавался с админскими полномочиями,
-но отдавались-к-дальнейшему использованию ключи сервисной записи с полномочиями редактора. 
-"Зарезать" более существенно - с ходу не получилось, но вопрос выходит за рамки решения задачи (см. также соответствующее
-описание [модуля S3](./modules/storage/s3/README.md)).
-
 - При решении/развертывании токены сеанса Я.Облака, ключей сервис-аккаунта Я.Облачного бекенд-хранилища
-Terraform задавались чере переменные среды окружения.
+Terraform задавались через переменные среды окружения, ssh-ключ - "пробрасывался" через "бастион"
+на оконечные хосты (agent forwarding), т.к. хранение закрытого ключа (даже в контейнере с паролем: 
+похищение и подбор пароля к закрытому ключу оффлайн - возможны, вероятны, актуальны) на транзитном
+хосте еще и совмещенными ролями "бастион", "web", "database" - прямое игнорирование требований ИБ.
+Настройки конфигурационных файлов, позволющих осуществлять прокси-подключение по ssh до хостов в закрытой сети
+без прямого доступа в интернет - приведены в репозитории: 
+[ansible.ini](./live/dev/app/ansible.ini), 
+[конфигурационный файл](./live/dev/app/conf/ssh-via-bastion.config) клиента ssh (шаблонизирован из 
+[файла](./live/dev/app/templates/ssh-via-bastion.config.tfpl))
 
-- Структура каталогов решения приведена в соответствии с рекомендациями
-[Terraform: инфраструктура на уровне кода](https://www.litres.ru/brikman/terraform-infrastruktura-na-urovne-koda-pdf-epub-66828333/).
-При этом из стадий жизненного цикла (пока есть) - только dev.
+- Создание пользователя с определенным ssh-ключом на виртуальных машинах произведено с помощью terraform
+с помощью яндекс-провайдера при создании виртуальных машин.
 
 - Подразумевается, что для инфраструктуры жизненного цикла development, stage, production - бэкенды хранения состояний
-terraform - разные, учетные записи облачных инфраструктур - разные.
+terraform - разные, учетные записи облачных инфраструктур - разные (и пока реализована только dev).
+
+- В качестве варианта, позволяющего организовать доступ хостов в закрытой сети к информации в репозиториях ПО
+и к пакетам ПО, принято решение использования прокси-сервера на бастионе (настройка - минимальна: ограничение 
+на уровне МЭ узла бастиона доступа к прокси - только для хостов закрытой подсети).
+
+- Развертывание производится сначала с помощью terraform и после отработки непосредственно создания инфраструктуры -
+в terraform-е локальным вызовом ansible для удаленной настройки развернутых серверов. 
+[Inventory](./live/dev/app/conf/inventory) - заполняется автоматически.
+Inventory (см. [шаблон](./live/dev/app/templates/inventory.tftpl)), часть файлов - шаблонизированы в т.ч. на уровне развертывания непосредстенно terraform (например, "запоминание" 
+внутреннего и внешнего адреса "бастиона"), что необходимо учесть при правке необходимых значений констант-"переменных" (например, 
+версии каталога данных сервиса posgresql)
+и править - в шаблоне.
+
+- Чтобы ansible отрабатывал на хостах в закрытой сети без непосредственного доступа в интернет,
+ чтобы устанавливались необходимые пакеты на указанных хостах,- проведена определенная процедура раскрутки готовности.
+
+- "Установка и запуск Docker" (цитата из формулировке задания) - в чистом виде оксюморон:
+или мы должны установить ПО "генерации образов" и запустить его, 
+или установить некую неважно какую службу управления контейнерами,
+причем в задании полностью отсутствует требование по эквивалентности решения для запуска docker-а
+между узлами инфраструктуры (группа app), и можно, аналогично заданию из 
+модуля С2.B1. "Современные методологии разработки" сделать - согласно принципу выполнения
+минимально допустимой и достаточной работы и недопущения ранней автоматизации -
+где-то установить containerd, где-то - только runc, а где-то - только утилиты командной
+строки для создания образа.  Причем данное решение было бы в рамках концепции школы -
+"В этом плане все эти требования гибки." (c) Ментор ("план" - см. [здесь](https://ru.wikipedia.org/wiki/%D0%9C%D0%B5%D0%BD%D1%82%D0%B0%D0%BB%D1%8C%D0%BD%D1%8B%D0%B9_%D0%BF%D0%BB%D0%B0%D0%BD)).
+Тем не менее, принято решение установки на хостах, в т.ч. с разными ОС, набора утилит, сервисов
+из одного источника (https://docs.docker.com/engine/install/).
+
+- Согласно требованию задания playbook-и необходимо было написать (не списать с ansible-galaxy),
+что и было реализовано в предлагаемом решении.
+
+- Для развертывания postgresql написанный playbook поддерживает в качестве семейства ОС на хосте как "ubuntu", так и "centos".
+
+- Тестирование проводилось в том числе неоднократным полным развертыванием.
+
+- При обучении примеров совместного использования решений terraform и ansible с требованием 
+к оформлению структуры каталогов - не приводилось; разнесение в рамках решения данной учебной задачи
+признано несущественным.
 
 ## Ход решения (принципиальная схема развертывания)
 
@@ -64,19 +95,6 @@ terraform plan
 terraform apply
 ```
 
-Результат развертывания - [здесь](https://disk.yandex.ru/d/l4e9TrDkCU4Lzw).
-Вывод приведен отдельно:
-
-```
-Outputs:
-
-access-key = "msXPzeP-pNfIWeawQUw9"
-bucket-endpoint = "storage.yandexcloud.net"
-bucket-name = "tf--c2-br-7--2"
-bucket-region = "ru-central1-a"
-secret-key = (sensitive value)
-```
-
 На доверенном терминале просматриваем в том числе секрето-чувствительные параметры,
 ключи аутентификации для s3-хранилища бэкенда - экспортируем в переменных среды окружения.
 
@@ -99,103 +117,40 @@ cd (__GIT_PROJECT_ROOT__)/live/dev/app
 terraform init
 # просматриваем план развертывания
 terraform plan
-# если всё устраивает - развертываем
-terraform apply
-# внимательно смотрим на вывод и обрануживаем, что при развертывании
-# тестирование (получение результатов развертывания для проверки задания Ментором курса) 
-# в полномо объеме - не произведено,
-# вызываем тестирование еще раз
+# если всё устраивает - осуществляем процедуру развертывания
 terraform apply
 ```
 
-- Ход развертывания - [здесь](https://disk.yandex.ru/d/GxXIuhq5e9tDDQ).
-- Результат развертывания - [здесь](https://disk.yandex.ru/d/SpsMh-nLEQG0-g).
-- Ход повторного тестирования - [здесь](https://disk.yandex.ru/d/4PC_rMBwzAU-YA).
+3. Итоги развертывания:
+- ход развертывания - [здесь](https://disk.yandex.ru/d/iisDMDYIzThcrA).
+- инвентарь (после рендера шаблонизатором) - [здесь](https://disk.yandex.ru/d/xFp7B-6dckOF7Q).
+- скриншоты запущенных служб: 
+    - [vm1](https://disk.yandex.ru/i/YzYjra_pnGHLew)
+    - [vm2](https://disk.yandex.ru/i/0VFfPeQB3uXeSA)
+    - [vm3](https://disk.yandex.ru/i/hK1plC2soksVnw)
+- плейбуки:
+    - [промежуточный, шаблон](/templates/bootstrap-bastion-0.yml.tfpl). Решение задачи "Установить на vm1 Ansible." - подготовка (ansible должен отрабатывать сколь возможно предсказуемо, поэтому python - требуем 3ей версии).
+    - [промежуточный, шаблон](/templates/bootstrap-bastion-1.yml.tfpl). Решение задачи "Установить на vm1 Ansible." - непосредственно, а также подготовка к развертыванию ролей.
+    - [промежуточный, шаблон](/templates/bootstrap-bastion-2.yml.tfpl). Решение задачи " выполняется установка и запуск" - подготовка (ansible должен отрабатывать сколь возможно предсказуемо, поэтому python - требуем 3ей версии).
+    - [промежуточный, шаблон](/templates/bootstrap-bastion-3.yml.tfpl). Решение задачи " выполняется установка и запуск" - непосредственно развертывание ролей.
+
 - Отдельно вывод по результату развертывания:
 
 ```
 Outputs:
 
-hosts = <<-EOT
-    51.250.9.202
-    62.84.120.73
+ansible-inventory = "./conf/inventory"
+ehost = "51.250.5.193"
+hosts = <<EOT
+192.168.1.7
+192.168.1.5
+192.168.1.9
 EOT
-hosts-port = 80
-nlb = "84.201.159.205"
-nlb-port = 80
 
-```
-
-Отдельно итоговые результаты авто-тестирования:
-
-```
-null_resource.check-results: Destroying... [id=4218881410677423300]
-null_resource.check-results: Destruction complete after 0s
-null_resource.check-results: Creating...
-null_resource.check-results: Provisioning with 'local-exec'...
-null_resource.check-results (local-exec): Executing: ["/bin/bash" "-c" "echo \"!!!-> `date` start checking...\"\n\nf
-unction webprint() {\n    descr=$1\n    addr=$2\n    port=$3\n    num=$4\n    seq $num | while read I; do\n        /
-usr/bin/echo -e \"==================================\\n`date` ${descr} addr: ${addr}\"\n        curl -L http://$addr
-:$port 2>/dev/null | html2text |  grep -v \"^$\" | head -n 2\n    done\n}\n\necho \"51.250.9.202\n62.84.120.73\" | w
-hile read A; do webprint hst $A \"80\" 1; done;\necho \"84.201.159.205\"   | while read A; do webprint nlb $A \"80\"
-  10; done;\n\necho \"!!!<- `date` end checking!\"\n"]
-null_resource.check-results (local-exec): !!!-> Sat 22 Jan 2022 06:14:37 PM UTC start checking...
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:37 PM UTC hst addr: 51.250.9.202
-null_resource.check-results (local-exec): ****** Welcome to nginx! ******
-null_resource.check-results (local-exec): If you see this page, the nginx web server is successfully installed and
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:37 PM UTC hst addr: 62.84.120.73
-null_resource.check-results (local-exec): [Ubuntu Logo]  Apache2 Ubuntu Default Page
-null_resource.check-results (local-exec): It works!
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:37 PM UTC nlb addr: 84.201.159.205
-null_resource.check-results (local-exec): ****** Welcome to nginx! ******
-null_resource.check-results (local-exec): If you see this page, the nginx web server is successfully installed and
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:38 PM UTC nlb addr: 84.201.159.205
-null_resource.check-results (local-exec): ****** Welcome to nginx! ******
-null_resource.check-results (local-exec): If you see this page, the nginx web server is successfully installed and
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:38 PM UTC nlb addr: 84.201.159.205
-null_resource.check-results (local-exec): ****** Welcome to nginx! ******
-null_resource.check-results (local-exec): If you see this page, the nginx web server is successfully installed and
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:38 PM UTC nlb addr: 84.201.159.205
-null_resource.check-results (local-exec): [Ubuntu Logo]  Apache2 Ubuntu Default Page
-null_resource.check-results (local-exec): It works!
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:39 PM UTC nlb addr: 84.201.159.205
-null_resource.check-results (local-exec): [Ubuntu Logo]  Apache2 Ubuntu Default Page
-null_resource.check-results (local-exec): It works!
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:39 PM UTC nlb addr: 84.201.159.205
-null_resource.check-results (local-exec): [Ubuntu Logo]  Apache2 Ubuntu Default Page
-null_resource.check-results (local-exec): It works!
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:39 PM UTC nlb addr: 84.201.159.205
-null_resource.check-results (local-exec): ****** Welcome to nginx! ******
-null_resource.check-results (local-exec): If you see this page, the nginx web server is successfully installed and
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:40 PM UTC nlb addr: 84.201.159.205
-null_resource.check-results (local-exec): [Ubuntu Logo]  Apache2 Ubuntu Default Page
-null_resource.check-results (local-exec): It works!
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:40 PM UTC nlb addr: 84.201.159.205
-null_resource.check-results (local-exec): [Ubuntu Logo]  Apache2 Ubuntu Default Page
-null_resource.check-results (local-exec): It works!
-null_resource.check-results (local-exec): ==================================
-null_resource.check-results (local-exec): Sat 22 Jan 2022 06:14:40 PM UTC nlb addr: 84.201.159.205
-null_resource.check-results (local-exec): [Ubuntu Logo]  Apache2 Ubuntu Default Page
-null_resource.check-results (local-exec): It works!
-null_resource.check-results (local-exec): !!!<- Sat 22 Jan 2022 06:14:41 PM UTC end checking!
-null_resource.check-results: Creation complete after 4s [id=568860007681471169]
-
-Apply complete! Resources: 1 added, 0 changed, 1 destroyed.
 ```
 
 ## Выводы по решению 
 
-- Два хоста с ОС нужных семейств - развернуты, из Internet хосты - доступны.
-- Сетевой балансировщик нагрузке - развернут, из Internet - доступен, балансировка - производится.
-- Балансировка трафика производится по статистически равномерному распределению.
+- Два хоста с ОС нужных версий - развернуты, из Internet хосты - доступен только "бастион",
+ Internet напрямую - доступен только с хоста "бастион".
+- Требуемые службы на заданных согласно заданию хостах с помощью playbook ansible-а - развернуты, запущены, работают.

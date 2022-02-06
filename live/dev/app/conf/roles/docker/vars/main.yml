@@ -1,0 +1,11 @@
+---
+
+# the os packages for service
+packages:
+- docker-ce
+- docker-ce-cli
+- containerd.io
+
+# the system services for service
+services:
+- containerd

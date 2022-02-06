@@ -30,7 +30,7 @@ variable "bucket-name" {
   description = "The s3-storage bucket name"
 
   type    = string
-  default = "tf--c2-br-7--2"
+  default = "tf--c2-b6-pr6--0"
 }
 
 variable "is-bucket-versioning" {

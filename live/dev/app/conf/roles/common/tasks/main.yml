@@ -1,0 +1,33 @@
+---
+
+
+
+- name: setup proxy settings
+  ansible.builtin.copy:
+    src:  00-apt-proxy.conf
+    dest: /etc/apt/apt.conf.d/
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+- name: configure proxy
+  ansible.builtin.lineinfile:
+    path: /etc/yum.conf
+    state: present
+    regexp: "proxy="
+    insertafter: "[main]"
+    line: "proxy={{ proxy }}"
+  when: ansible_facts['distribution'] == "CentOS"
+
+- name: Install common packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages }}"
+
+- name: Install common distr-specific packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ lookup('vars', 'packages_' + ansible_distribution) }}"

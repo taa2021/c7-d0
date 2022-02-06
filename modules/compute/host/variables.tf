@@ -42,7 +42,7 @@ variable "cpu-fraq" {
   description = "The reserved share of processor (%) for the deployable host"
 
   type    = number
-  default = 20
+  default = 5
 }
 
 variable "is-preemptible" {

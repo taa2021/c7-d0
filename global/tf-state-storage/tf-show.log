@@ -1,0 +1,110 @@
+
+# module.s3-backend.yandex_iam_service_account.bucket-acc-admin:
+resource "yandex_iam_service_account" "bucket-acc-admin" {
+    created_at = "2022-02-03T10:30:03Z"
+    folder_id  = "b1g69vcep3edfhtfk9q0"
+    id         = "ajed938so7bmtu9idas9"
+    name       = "s3-acc-admin-of-bucket-tf--c2-b6-pr6--0"
+}
+
+# module.s3-backend.yandex_iam_service_account.bucket-acc-uploader:
+resource "yandex_iam_service_account" "bucket-acc-uploader" {
+    created_at = "2022-02-03T10:30:05Z"
+    folder_id  = "b1g69vcep3edfhtfk9q0"
+    id         = "aje77k3oi9mo3g2v8o92"
+    name       = "s3-acc-uploader-of-bucket-tf--c2-b6-pr6--0"
+}
+
+# module.s3-backend.yandex_iam_service_account_static_access_key.bucket-admin-key:
+resource "yandex_iam_service_account_static_access_key" "bucket-admin-key" {
+    access_key         = "flJgPoVujHQ5j9GVR4sJ"
+    created_at         = "2022-02-03T10:30:05Z"
+    id                 = "ajelbs8o5jtr1so010tl"
+    secret_key         = (sensitive value)
+    service_account_id = "ajed938so7bmtu9idas9"
+}
+
+# module.s3-backend.yandex_iam_service_account_static_access_key.bucket-uploader-key:
+resource "yandex_iam_service_account_static_access_key" "bucket-uploader-key" {
+    access_key         = "GEfGs6GweA82FyRTIpUS"
+    created_at         = "2022-02-03T10:30:06Z"
+    id                 = "ajenm0kog7bnjptgab3u"
+    secret_key         = (sensitive value)
+    service_account_id = "aje77k3oi9mo3g2v8o92"
+}
+
+# module.s3-backend.yandex_kms_symmetric_key.bucket-skey:
+resource "yandex_kms_symmetric_key" "bucket-skey" {
+    created_at        = "2022-02-03T10:30:04Z"
+    default_algorithm = "AES_256"
+    folder_id         = "b1g69vcep3edfhtfk9q0"
+    id                = "abj887lq6acmtttbbue8"
+    labels            = {
+        "environment" = "dev"
+        "terraform"   = "true"
+    }
+    name              = "s3-bucket-skey-tf--c2-b6-pr6--0"
+    rotation_period   = "24h0m0s"
+    status            = "active"
+}
+
+# module.s3-backend.yandex_resourcemanager_folder.s3-folder:
+resource "yandex_resourcemanager_folder" "s3-folder" {
+    cloud_id   = "b1gjilr27b0mqp90rj46"
+    created_at = "2022-02-03T10:30:01Z"
+    id         = "b1g69vcep3edfhtfk9q0"
+    labels     = {
+        "environment" = "dev"
+        "terraform"   = "true"
+    }
+    name       = "s3-folder-of-bucket-tf--c2-b6-pr6--0"
+}
+
+# module.s3-backend.yandex_resourcemanager_folder_iam_member.acc-bucket-admin-acl:
+resource "yandex_resourcemanager_folder_iam_member" "acc-bucket-admin-acl" {
+    folder_id = "b1g69vcep3edfhtfk9q0"
+    id        = "b1g69vcep3edfhtfk9q0/admin/serviceAccount:ajed938so7bmtu9idas9"
+    member    = "serviceAccount:ajed938so7bmtu9idas9"
+    role      = "admin"
+}
+
+# module.s3-backend.yandex_resourcemanager_folder_iam_member.acc-bucket-uploader-acl:
+resource "yandex_resourcemanager_folder_iam_member" "acc-bucket-uploader-acl" {
+    folder_id = "b1g69vcep3edfhtfk9q0"
+    id        = "b1g69vcep3edfhtfk9q0/editor/serviceAccount:aje77k3oi9mo3g2v8o92"
+    member    = "serviceAccount:aje77k3oi9mo3g2v8o92"
+    role      = "editor"
+}
+
+# module.s3-backend.yandex_storage_bucket.bucket:
+resource "yandex_storage_bucket" "bucket" {
+    access_key         = "flJgPoVujHQ5j9GVR4sJ"
+    acl                = "private"
+    bucket             = "tf--c2-b6-pr6--0"
+    bucket_domain_name = "tf--c2-b6-pr6--0.storage.yandexcloud.net"
+    force_destroy      = false
+    id                 = "tf--c2-b6-pr6--0"
+    secret_key         = (sensitive value)
+
+    server_side_encryption_configuration {
+        rule {
+            apply_server_side_encryption_by_default {
+                kms_master_key_id = "abj887lq6acmtttbbue8"
+                sse_algorithm     = "aws:kms"
+            }
+        }
+    }
+
+    versioning {
+        enabled = true
+    }
+}
+
+
+Outputs:
+
+access-key = "GEfGs6GweA82FyRTIpUS"
+bucket-endpoint = "storage.yandexcloud.net"
+bucket-name = "tf--c2-b6-pr6--0"
+bucket-region = "ru-central1-a"
+secret-key = (sensitive value)

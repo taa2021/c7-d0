@@ -34,8 +34,16 @@ resource "yandex_compute_instance" "host" {
   }
 
   metadata = {
-    ssh-keys = "${var.login}:${var.ssh}"
+    user-data = <<EOT
+#cloud-config
+users:
+  - name: ${var.login}
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh-authorized-keys:
+      - ${var.ssh}
+EOT
   }
-
   labels = var.cloud-tags
 }

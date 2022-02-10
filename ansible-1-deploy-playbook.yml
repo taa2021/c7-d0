@@ -1,0 +1,19 @@
+---
+- name: SF ansible tasks - deploy
+  hosts: all
+  remote_user: ruser0
+  become: true
+  vars:
+    postgresql_version: 12
+    postgresql_pgdata:  /var/spool/pgdata/12
+    docker_app_name: app0
+    docker_app_db_host: 172.17.0.1
+    docker_app_db_name: db_app0
+    docker_app_db_user: db_admin
+
+  roles:
+#    - common
+#    - postgresql
+#    - postgresql_app0
+#    - docker
+    - docker_app0

@@ -1,0 +1,14 @@
+---
+
+# the os packages for service
+packages:
+- containerd.io
+- docker-ce
+- docker-ce-cli
+- git
+- python3-docker
+
+# the system services for service
+services:
+- containerd
+- docker

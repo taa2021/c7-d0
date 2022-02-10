@@ -1,0 +1,19 @@
+---
+
+- name: Provision Terraform App
+  terraform:
+    project_path: "{{ playbook_dir }}/tf/live/dev/app"
+    state: present
+    force_init: true
+    backend_config:
+      bucket: "{{ tf_s3_backend.outputs.bucket_name.value }}"
+      endpoint: "{{ tf_s3_backend.outputs.bucket_endpoint.value }}"
+      region: "{{ tf_s3_backend.outputs.bucket_region.value }}"
+      access_key: "{{ tf_s3_backend.outputs.access_key.value }}"
+      secret_key: "{{ tf_s3_backend.outputs.secret_key.value }}"
+      key: "terraform.tfstate"
+  register: tf_app
+
+- name: Debug print cloud hosts
+  debug:
+    msg: "{{ tf_app.outputs.hosts.value }}"

@@ -1,0 +1,7 @@
+---
+
+- name: Start service
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+  with_items: "{{ services }}"

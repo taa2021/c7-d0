@@ -1,0 +1,26 @@
+---
+- name: SF ansible tasks - provision
+  hosts: all
+  vars:
+    yc_cloud_id:  b1gjilr27b0mqp90rj46
+    yc_folder_id: b1gjo8k8qajfr6ftho2n
+    yc_iam_token: "{{ lookup('pipe', 'yc iam create-token') | quote }}"
+    ansible_pwd:  "{{ lookup('pipe', 'y') | quote }}"
+    ssh_pub_key_default:  "{{ lookup('file', 'ssh_pub_key_default') | quote }}"
+
+  environment:
+    TF_VAR_yc_cloud_id:  "{{ yc_cloud_id  }}"
+    TF_VAR_yc_folder_id: "{{ yc_folder_id  }}"
+    TF_VAR_yc_iam_token: "{{ yc_iam_token }}"
+    TF_VAR_ssh_pub_key_default: "{{ ssh_pub_key_default }}"
+
+  roles:
+    - tf_s3_backend
+    - tf_app
+
+  tasks:
+    - name: write inventory-deploy
+      local_action:
+        module: copy
+        content: "{{ tf_app.outputs.hosts.value }}\n"
+        dest: ansible-1-deploy-inventory.txt

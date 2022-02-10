@@ -1,5 +1,0 @@
-access-key = "GEfGs6GweA82FyRTIpUS"
-bucket-endpoint = "storage.yandexcloud.net"
-bucket-name = "tf--c2-b6-pr6--0"
-bucket-region = "ru-central1-a"
-secret-key = <sensitive>

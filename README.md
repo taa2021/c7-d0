@@ -34,7 +34,7 @@ ansible-playbook -i ansible-1-deploy-inventory.txt ansible-1-deploy-playbook.yml
 
 3. Отдельно, дополнительно повторяем тестирование работоспособности приложения в соответствии с критериями [задания](./TASK.md)
 ```
-ansible-playbook -i ansible-1-deploy-inventory.txt ansible-1-deploy-playbook.yml | tee out/ansible-1-deploy-apply.log
+ansible-playbook -i ansible-1-deploy-inventory.txt ansible-2-test-playbook.yml | tee out/ansible-2-test-apply.log
 ```
 
 4. Итоги развертывания:

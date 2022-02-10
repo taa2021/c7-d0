@@ -1,4 +1,4 @@
-yc_iam_token
+tf_s3_backend
 =========
 
-Get yandex.cloud token
+Prepair s3 backend for terraform provisioning

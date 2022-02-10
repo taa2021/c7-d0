@@ -66,7 +66,7 @@ TASK [postgresql : Allow docker-containers connection] *************************
 ok: [51.250.3.100]
 
 TASK [postgresql : Allow docker-containers connection] *************************************************************
-changed: [51.250.3.100]
+ok: [51.250.3.100]
 
 TASK [postgresql : Create service] *********************************************************************************
 ok: [51.250.3.100]
@@ -181,6 +181,9 @@ ok: [51.250.3.100]
 TASK [docker_app0 : Restart a container] ***************************************************************************
 ok: [51.250.3.100]
 
+TASK [docker_app0 : Debug fetch Dockerfile to local out] ***********************************************************
+ok: [51.250.3.100]
+
 TASK [test : Install test helpers] *********************************************************************************
 ok: [51.250.3.100] => (item=wget)
 ok: [51.250.3.100] => (item=html2text)
@@ -202,8 +205,8 @@ changed: [51.250.3.100]
 TASK [test : debug] ************************************************************************************************
 ok: [51.250.3.100] => {
     "msg": [
-        "CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS          PORTS                  NAMES",
-        "2482bd051eda   app0:v0.0.1   \"python3 -m flask ru…\"   30 minutes ago   Up 30 minutes   0.0.0.0:8080->80/tcp   app0_v0.0.1_test"
+        "CONTAINER ID   IMAGE         COMMAND                  CREATED       STATUS       PORTS                  NAMES",
+        "2482bd051eda   app0:v0.0.1   \"python3 -m flask ru…\"   2 hours ago   Up 2 hours   0.0.0.0:8080->80/tcp   app0_v0.0.1_test"
     ]
 }
 
@@ -248,17 +251,18 @@ changed: [51.250.3.100]
 TASK [test : debug] ************************************************************************************************
 ok: [51.250.3.100] => {
     "msg": [
-        "State       Recv-Q   Send-Q     Local Address:Port         Peer Address:Port    Process                                                                         ",
-        "LISTEN      0        244              0.0.0.0:5432              0.0.0.0:*        users:((\"postgres\",pid=14008,fd=3))                                            ",
-        "LISTEN      0        4096             0.0.0.0:8080              0.0.0.0:*        users:((\"docker-proxy\",pid=19134,fd=4))                                        ",
-        "LISTEN      0        4096       127.0.0.53%lo:53                0.0.0.0:*        users:((\"systemd-resolve\",pid=376,fd=13))                                      ",
-        "LISTEN      0        128              0.0.0.0:22                0.0.0.0:*        users:((\"sshd\",pid=539,fd=3))                                                  ",
-        "ESTAB       0        0           192.168.1.10:22          85.140.12.156:14514    users:((\"sshd\",pid=12530,fd=4),(\"sshd\",pid=12490,fd=4))                        ",
-        "ESTAB       0        1097        192.168.1.10:22         122.194.229.37:63022    users:((\"sshd\",pid=25475,fd=4),(\"sshd\",pid=25474,fd=4))                        ",
-        "TIME-WAIT   0        0              127.0.0.1:8080            127.0.0.1:42500                                                                                   ",
-        "ESTAB       0        0           192.168.1.10:22          152.70.128.26:52336    users:((\"sshd\",pid=22913,fd=4),(\"sshd\",pid=22882,fd=4))                        ",
-        "LISTEN      0        244                 [::]:5432                 [::]:*        users:((\"postgres\",pid=14008,fd=4))                                            ",
-        "LISTEN      0        128                 [::]:22                   [::]:*        users:((\"sshd\",pid=539,fd=4))                                                  "
+        "State       Recv-Q   Send-Q      Local Address:Port        Peer Address:Port    Process                                                                         ",
+        "LISTEN      0        244               0.0.0.0:5432             0.0.0.0:*        users:((\"postgres\",pid=14008,fd=3))                                            ",
+        "LISTEN      0        4096              0.0.0.0:8080             0.0.0.0:*        users:((\"docker-proxy\",pid=19134,fd=4))                                        ",
+        "LISTEN      0        4096        127.0.0.53%lo:53               0.0.0.0:*        users:((\"systemd-resolve\",pid=376,fd=13))                                      ",
+        "LISTEN      0        128               0.0.0.0:22               0.0.0.0:*        users:((\"sshd\",pid=539,fd=3))                                                  ",
+        "SYN-RECV    0        0            192.168.1.10:22         61.177.173.21:14269                                                                                   ",
+        "TIME-WAIT   0        0               127.0.0.1:8080           127.0.0.1:42562                                                                                   ",
+        "ESTAB       0        0            192.168.1.10:22         85.140.12.156:14514    users:((\"sshd\",pid=12530,fd=4),(\"sshd\",pid=12490,fd=4))                        ",
+        "SYN-RECV    0        0            192.168.1.10:22         61.177.173.21:53863                                                                                   ",
+        "ESTAB       0        0            192.168.1.10:22         152.70.128.26:52704    users:((\"sshd\",pid=36416,fd=4),(\"sshd\",pid=36384,fd=4))                        ",
+        "LISTEN      0        244                  [::]:5432                [::]:*        users:((\"postgres\",pid=14008,fd=4))                                            ",
+        "LISTEN      0        128                  [::]:22                  [::]:*        users:((\"sshd\",pid=539,fd=4))                                                  "
     ]
 }
 
@@ -280,23 +284,23 @@ ok: [51.250.3.100] => {
         "total 12",
         "drwxr-xr-x 3 root root 4096 Feb 10 16:48 .",
         "drwx------ 3 root root 4096 Feb 10 16:49 ..",
-        "drwxr-xr-x 3 root root 4096 Feb 10 17:25 app",
+        "drwxr-xr-x 3 root root 4096 Feb 10 18:36 app",
         "",
         "/var/spool/docker/app0/build/srv/app:",
         "total 16",
-        "drwxr-xr-x 3 root root 4096 Feb 10 17:25 .",
+        "drwxr-xr-x 3 root root 4096 Feb 10 18:36 .",
         "drwxr-xr-x 3 root root 4096 Feb 10 16:48 ..",
-        "-r--r----- 1 root root 1095 Feb 10 17:25 app.py",
+        "-r--r----- 1 root root 1095 Feb 10 18:36 app.py",
         "drwxr-x--- 2 root root 4096 Feb 10 16:49 conf",
         "",
         "/var/spool/docker/app0/build/srv/app/conf:",
         "total 12",
         "drwxr-x--- 2 root root 4096 Feb 10 16:49 .",
-        "drwxr-xr-x 3 root root 4096 Feb 10 17:25 ..",
+        "drwxr-xr-x 3 root root 4096 Feb 10 18:36 ..",
         "-r--r----- 1 root root  125 Feb 10 16:49 web.conf"
     ]
 }
 
 PLAY RECAP *********************************************************************************************************
-51.250.3.100               : ok=58   changed=16   unreachable=0    failed=0    skipped=11   rescued=0    ignored=0   
+51.250.3.100               : ok=59   changed=15   unreachable=0    failed=0    skipped=11   rescued=0    ignored=0   
 

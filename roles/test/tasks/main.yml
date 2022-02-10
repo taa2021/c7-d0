@@ -10,7 +10,7 @@
     - html2text
 
 - name: check site frontend
-  shell: wget -O - http://localhost:8080 | html2text | head -n 10
+  shell: wget -q -O - http://localhost:8080 | html2text | head -n 10
   args:
     warn: no
   register: check0

@@ -1,0 +1,124 @@
+
+PLAY [SF ansible tasks - deploy] ***********************************************************************************
+
+TASK [Gathering Facts] *********************************************************************************************
+ok: [51.250.3.100]
+
+TASK [test : Install test helpers] *********************************************************************************
+ok: [51.250.3.100] => (item=wget)
+ok: [51.250.3.100] => (item=html2text)
+
+TASK [test : check site frontend] **********************************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        "****** Hello there! ******",
+        "Everything is OK! DB Query was completed by db_admin user"
+    ]
+}
+
+TASK [test : check docker ps -a] ***********************************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        "CONTAINER ID   IMAGE         COMMAND                  CREATED       STATUS       PORTS                  NAMES",
+        "2482bd051eda   app0:v0.0.1   \"python3 -m flask ru…\"   2 hours ago   Up 2 hours   0.0.0.0:8080->80/tcp   app0_v0.0.1_test"
+    ]
+}
+
+TASK [test : check docker image] ***********************************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        ""
+    ]
+}
+
+TASK [test : check the Dockerfile] *********************************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        "FROM python:3.10-alpine",
+        "",
+        "RUN \\",
+        " apk add --no-cache postgresql-libs && \\",
+        " apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \\",
+        " python3 -m pip install flask psycopg2 configparser --no-cache-dir && \\",
+        " apk --purge del .build-deps",
+        "",
+        "COPY . .",
+        "",
+        "WORKDIR srv/app",
+        "",
+        "ENTRYPOINT [ \"python3\", \"-m\", \"flask\", \"run\" ]",
+        "CMD [ \"--host=0.0.0.0\", \"--port=80\" ]",
+        "",
+        "EXPOSE 80"
+    ]
+}
+
+TASK [test : check network connections] ****************************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        "State       Recv-Q   Send-Q      Local Address:Port        Peer Address:Port    Process                                                                         ",
+        "LISTEN      0        244               0.0.0.0:5432             0.0.0.0:*        users:((\"postgres\",pid=14008,fd=3))                                            ",
+        "LISTEN      0        4096              0.0.0.0:8080             0.0.0.0:*        users:((\"docker-proxy\",pid=19134,fd=4))                                        ",
+        "LISTEN      0        4096        127.0.0.53%lo:53               0.0.0.0:*        users:((\"systemd-resolve\",pid=376,fd=13))                                      ",
+        "LISTEN      0        128               0.0.0.0:22               0.0.0.0:*        users:((\"sshd\",pid=539,fd=3))                                                  ",
+        "ESTAB       0        0            192.168.1.10:22         85.140.12.156:14514    users:((\"sshd\",pid=12530,fd=4),(\"sshd\",pid=12490,fd=4))                        ",
+        "TIME-WAIT   0        0               127.0.0.1:8080           127.0.0.1:42568                                                                                   ",
+        "ESTAB       0        0            192.168.1.10:22         152.70.128.26:52704    users:((\"sshd\",pid=36416,fd=4),(\"sshd\",pid=36384,fd=4))                        ",
+        "LISTEN      0        244                  [::]:5432                [::]:*        users:((\"postgres\",pid=14008,fd=4))                                            ",
+        "LISTEN      0        128                  [::]:22                  [::]:*        users:((\"sshd\",pid=539,fd=4))                                                  "
+    ]
+}
+
+TASK [test : check the docker image root directory] ****************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        "/var/spool/docker/app0/build:",
+        "total 20",
+        "drwx------ 3 root root 4096 Feb 10 16:49 .",
+        "drwxr-xr-x 4 root root 4096 Feb 10 16:48 ..",
+        "-rw-r--r-- 1 root root  372 Feb 10 16:49 Dockerfile",
+        "-rw-r--r-- 1 root root   11 Feb 10 16:49 .dockerignore",
+        "drwxr-xr-x 3 root root 4096 Feb 10 16:48 srv",
+        "",
+        "/var/spool/docker/app0/build/srv:",
+        "total 12",
+        "drwxr-xr-x 3 root root 4096 Feb 10 16:48 .",
+        "drwx------ 3 root root 4096 Feb 10 16:49 ..",
+        "drwxr-xr-x 3 root root 4096 Feb 10 18:36 app",
+        "",
+        "/var/spool/docker/app0/build/srv/app:",
+        "total 16",
+        "drwxr-xr-x 3 root root 4096 Feb 10 18:36 .",
+        "drwxr-xr-x 3 root root 4096 Feb 10 16:48 ..",
+        "-r--r----- 1 root root 1095 Feb 10 18:36 app.py",
+        "drwxr-x--- 2 root root 4096 Feb 10 16:49 conf",
+        "",
+        "/var/spool/docker/app0/build/srv/app/conf:",
+        "total 12",
+        "drwxr-x--- 2 root root 4096 Feb 10 16:49 .",
+        "drwxr-xr-x 3 root root 4096 Feb 10 18:36 ..",
+        "-r--r----- 1 root root  125 Feb 10 16:49 web.conf"
+    ]
+}
+
+PLAY RECAP *********************************************************************************************************
+51.250.3.100               : ok=14   changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

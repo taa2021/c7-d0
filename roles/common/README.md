@@ -1,4 +1,4 @@
-php
+common
 =========
 
-Install, configure, remove php-fpm
+Install, configure, remove common OS packages

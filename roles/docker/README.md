@@ -1,4 +1,4 @@
-php
+docker
 =========
 
-Install, configure, remove php-fpm
+Install, configure, remove docker

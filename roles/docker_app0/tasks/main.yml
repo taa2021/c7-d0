@@ -149,3 +149,13 @@
 #    restart: yes
     ports:
      - "8080:80"
+
+
+- name: Debug fetch Dockerfile to local out
+  ansible.builtin.fetch:
+    src:  "{{ docker_app_build_root }}/{{ docker_app_name }}/build/Dockerfile"
+    dest: "{{ playbook_dir }}/out/"
+    flat: yes
+    owner: root
+    group: root
+    mode: '0644'

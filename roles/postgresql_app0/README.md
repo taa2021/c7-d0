@@ -1,4 +1,4 @@
-yc_iam_token
+postgresql_app0
 =========
 
-Get yandex.cloud token
+Create an user, a database for PostgreSQL for the application app0

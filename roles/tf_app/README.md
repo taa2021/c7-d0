@@ -1,4 +1,4 @@
-yc_iam_token
+tf_app
 =========
 
-Get yandex.cloud token
+Provision Terraform App (dev environment)

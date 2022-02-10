@@ -1,3 +1,3 @@
-docker app0
+docker_app0
 =========
 Deploy docker application app0

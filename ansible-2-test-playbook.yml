@@ -1,0 +1,8 @@
+---
+- name: SF ansible tasks - deploy
+  hosts: all
+  remote_user: ruser0
+  become: true
+
+  roles:
+    - test

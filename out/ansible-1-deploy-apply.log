@@ -1,0 +1,302 @@
+
+PLAY [SF ansible tasks - deploy] ***********************************************************************************
+
+TASK [Gathering Facts] *********************************************************************************************
+ok: [51.250.3.100]
+
+TASK [common : Install common packages] ****************************************************************************
+ok: [51.250.3.100] => (item=ca-certificates)
+ok: [51.250.3.100] => (item=curl)
+ok: [51.250.3.100] => (item=python3)
+ok: [51.250.3.100] => (item=gnupg)
+
+TASK [common : Install common distr-specific packages] *************************************************************
+ok: [51.250.3.100] => (item=lsb-release)
+ok: [51.250.3.100] => (item=language-pack-ru)
+
+TASK [postgresql : Set pgp repo key] *******************************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Set pgp repo key] *******************************************************************************
+skipping: [51.250.3.100]
+
+TASK [postgresql : Import pgp repo key] ****************************************************************************
+skipping: [51.250.3.100]
+
+TASK [postgresql : Import pgp repo key] ****************************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Add repository] *********************************************************************************
+skipping: [51.250.3.100]
+
+TASK [postgresql : Clean repository cache (CentOS)] ****************************************************************
+skipping: [51.250.3.100]
+
+TASK [postgresql : Disable selinux (CentOS)] ***********************************************************************
+skipping: [51.250.3.100]
+
+TASK [postgresql : Disable selinux permanently (CentOS)] ***********************************************************
+skipping: [51.250.3.100]
+
+TASK [postgresql : Work out the distribution] **********************************************************************
+changed: [51.250.3.100]
+
+TASK [postgresql : Add repository] *********************************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Install package] ********************************************************************************
+skipping: [51.250.3.100]
+
+TASK [postgresql : Install package] ********************************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Change ownership of a directory] ****************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Change ownership of a directory] ****************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Initialize the Database] ************************************************************************
+skipping: [51.250.3.100]
+
+TASK [postgresql : Initialize the Database] ************************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Allow docker-containers connection] *************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Allow docker-containers connection] *************************************************************
+changed: [51.250.3.100]
+
+TASK [postgresql : Create service] *********************************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Disable system stardart ubuntu service] *********************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Enable and start service] ***********************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql : Debug] ******************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": "postgresql-12@-var-spool-pgdata-12.service"
+}
+
+TASK [postgresql_app0 : Install packages] **************************************************************************
+ok: [51.250.3.100] => (item=python3-psycopg2)
+
+TASK [postgresql_app0 : Create the "db_admin" user] ****************************************************************
+ok: [51.250.3.100]
+
+TASK [postgresql_app0 : postgresql_db] *****************************************************************************
+ok: [51.250.3.100]
+
+TASK [docker : Set docker-pgp repo key (ubuntu)] *******************************************************************
+ok: [51.250.3.100]
+
+TASK [docker : Set docker-pgp repo key (centos)] *******************************************************************
+skipping: [51.250.3.100]
+
+TASK [docker : Import docker-pgp repo key (CentOS)] ****************************************************************
+skipping: [51.250.3.100]
+
+TASK [docker : Import docker-pgp repo key (Ubuntu)] ****************************************************************
+ok: [51.250.3.100]
+
+TASK [docker : Add repository (CentOS)] ****************************************************************************
+skipping: [51.250.3.100]
+
+TASK [docker : Work out the distribution] **************************************************************************
+changed: [51.250.3.100]
+
+TASK [docker : Add repository (Ubuntu)] ****************************************************************************
+ok: [51.250.3.100]
+
+TASK [docker : Install packages] ***********************************************************************************
+ok: [51.250.3.100] => (item=containerd.io)
+ok: [51.250.3.100] => (item=docker-ce)
+ok: [51.250.3.100] => (item=docker-ce-cli)
+ok: [51.250.3.100] => (item=git)
+ok: [51.250.3.100] => (item=python3-docker)
+
+TASK [docker : Enable service] *************************************************************************************
+ok: [51.250.3.100] => (item=containerd)
+ok: [51.250.3.100] => (item=docker)
+
+TASK [docker : Start service] **************************************************************************************
+ok: [51.250.3.100] => (item=containerd)
+ok: [51.250.3.100] => (item=docker)
+
+TASK [docker_app0 : Change ownership of a directory - docker build root] *******************************************
+ok: [51.250.3.100]
+
+TASK [docker_app0 : Change ownership of a directory - docker build] ************************************************
+ok: [51.250.3.100]
+
+TASK [docker_app0 : Change ownership of a directory - docker build src] ********************************************
+ok: [51.250.3.100]
+
+TASK [docker_app0 : Change ownership of a directory - docker build conf] *******************************************
+ok: [51.250.3.100]
+
+TASK [docker_app0 : Change ownership of a directory - docker tmp] **************************************************
+ok: [51.250.3.100]
+
+TASK [docker_app0 : Clone of the app repo] *************************************************************************
+changed: [51.250.3.100]
+
+TASK [docker_app0 : Set DB host] ***********************************************************************************
+changed: [51.250.3.100]
+
+TASK [docker_app0 : Set DB name] ***********************************************************************************
+changed: [51.250.3.100]
+
+TASK [docker_app0 : Set DB user] ***********************************************************************************
+changed: [51.250.3.100]
+
+TASK [docker_app0 : Set DB password] *******************************************************************************
+changed: [51.250.3.100]
+
+TASK [docker_app0 : Copy app config] *******************************************************************************
+ok: [51.250.3.100]
+
+TASK [docker_app0 : Copy app src] **********************************************************************************
+changed: [51.250.3.100]
+
+TASK [docker_app0 : Patch-00 app src] ******************************************************************************
+changed: [51.250.3.100]
+
+TASK [docker_app0 : Set the iptables policy for the FORWARD chain to ACCEPT] ***************************************
+ok: [51.250.3.100]
+
+TASK [docker_app0 : Copy Dockerfile] *******************************************************************************
+ok: [51.250.3.100]
+
+TASK [docker_app0 : Copy Dockerignore] *****************************************************************************
+ok: [51.250.3.100]
+
+TASK [docker_app0 : Build image and with build args] ***************************************************************
+ok: [51.250.3.100]
+
+TASK [docker_app0 : Restart a container] ***************************************************************************
+ok: [51.250.3.100]
+
+TASK [test : Install test helpers] *********************************************************************************
+ok: [51.250.3.100] => (item=wget)
+ok: [51.250.3.100] => (item=html2text)
+
+TASK [test : check site frontend] **********************************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        "****** Hello there! ******",
+        "Everything is OK! DB Query was completed by db_admin user"
+    ]
+}
+
+TASK [test : check docker ps -a] ***********************************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        "CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS          PORTS                  NAMES",
+        "2482bd051eda   app0:v0.0.1   \"python3 -m flask ru…\"   30 minutes ago   Up 30 minutes   0.0.0.0:8080->80/tcp   app0_v0.0.1_test"
+    ]
+}
+
+TASK [test : check docker image] ***********************************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        ""
+    ]
+}
+
+TASK [test : check the Dockerfile] *********************************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        "FROM python:3.10-alpine",
+        "",
+        "RUN \\",
+        " apk add --no-cache postgresql-libs && \\",
+        " apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \\",
+        " python3 -m pip install flask psycopg2 configparser --no-cache-dir && \\",
+        " apk --purge del .build-deps",
+        "",
+        "COPY . .",
+        "",
+        "WORKDIR srv/app",
+        "",
+        "ENTRYPOINT [ \"python3\", \"-m\", \"flask\", \"run\" ]",
+        "CMD [ \"--host=0.0.0.0\", \"--port=80\" ]",
+        "",
+        "EXPOSE 80"
+    ]
+}
+
+TASK [test : check network connections] ****************************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        "State       Recv-Q   Send-Q     Local Address:Port         Peer Address:Port    Process                                                                         ",
+        "LISTEN      0        244              0.0.0.0:5432              0.0.0.0:*        users:((\"postgres\",pid=14008,fd=3))                                            ",
+        "LISTEN      0        4096             0.0.0.0:8080              0.0.0.0:*        users:((\"docker-proxy\",pid=19134,fd=4))                                        ",
+        "LISTEN      0        4096       127.0.0.53%lo:53                0.0.0.0:*        users:((\"systemd-resolve\",pid=376,fd=13))                                      ",
+        "LISTEN      0        128              0.0.0.0:22                0.0.0.0:*        users:((\"sshd\",pid=539,fd=3))                                                  ",
+        "ESTAB       0        0           192.168.1.10:22          85.140.12.156:14514    users:((\"sshd\",pid=12530,fd=4),(\"sshd\",pid=12490,fd=4))                        ",
+        "ESTAB       0        1097        192.168.1.10:22         122.194.229.37:63022    users:((\"sshd\",pid=25475,fd=4),(\"sshd\",pid=25474,fd=4))                        ",
+        "TIME-WAIT   0        0              127.0.0.1:8080            127.0.0.1:42500                                                                                   ",
+        "ESTAB       0        0           192.168.1.10:22          152.70.128.26:52336    users:((\"sshd\",pid=22913,fd=4),(\"sshd\",pid=22882,fd=4))                        ",
+        "LISTEN      0        244                 [::]:5432                 [::]:*        users:((\"postgres\",pid=14008,fd=4))                                            ",
+        "LISTEN      0        128                 [::]:22                   [::]:*        users:((\"sshd\",pid=539,fd=4))                                                  "
+    ]
+}
+
+TASK [test : check the docker image root directory] ****************************************************************
+changed: [51.250.3.100]
+
+TASK [test : debug] ************************************************************************************************
+ok: [51.250.3.100] => {
+    "msg": [
+        "/var/spool/docker/app0/build:",
+        "total 20",
+        "drwx------ 3 root root 4096 Feb 10 16:49 .",
+        "drwxr-xr-x 4 root root 4096 Feb 10 16:48 ..",
+        "-rw-r--r-- 1 root root  372 Feb 10 16:49 Dockerfile",
+        "-rw-r--r-- 1 root root   11 Feb 10 16:49 .dockerignore",
+        "drwxr-xr-x 3 root root 4096 Feb 10 16:48 srv",
+        "",
+        "/var/spool/docker/app0/build/srv:",
+        "total 12",
+        "drwxr-xr-x 3 root root 4096 Feb 10 16:48 .",
+        "drwx------ 3 root root 4096 Feb 10 16:49 ..",
+        "drwxr-xr-x 3 root root 4096 Feb 10 17:25 app",
+        "",
+        "/var/spool/docker/app0/build/srv/app:",
+        "total 16",
+        "drwxr-xr-x 3 root root 4096 Feb 10 17:25 .",
+        "drwxr-xr-x 3 root root 4096 Feb 10 16:48 ..",
+        "-r--r----- 1 root root 1095 Feb 10 17:25 app.py",
+        "drwxr-x--- 2 root root 4096 Feb 10 16:49 conf",
+        "",
+        "/var/spool/docker/app0/build/srv/app/conf:",
+        "total 12",
+        "drwxr-x--- 2 root root 4096 Feb 10 16:49 .",
+        "drwxr-xr-x 3 root root 4096 Feb 10 17:25 ..",
+        "-r--r----- 1 root root  125 Feb 10 16:49 web.conf"
+    ]
+}
+
+PLAY RECAP *********************************************************************************************************
+51.250.3.100               : ok=58   changed=16   unreachable=0    failed=0    skipped=11   rescued=0    ignored=0   
+

@@ -1,0 +1,55 @@
+---
+
+- name: Install test helpers
+  become: yes
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - wget
+    - html2text
+
+- name: check site frontend
+  shell: wget -O - http://localhost:8080 | html2text | head -n 10
+  args:
+    warn: no
+  register: check0
+
+- debug: msg="{{ check0.stdout.split('\n') }}"
+
+
+- name: check docker ps -a
+  become: yes
+  shell: docker ps -a
+  register: check1
+
+- debug: msg="{{ check1.stdout.split('\n') }}"
+
+
+- name: check docker image 
+  become: yes
+  shell: docker image
+  register: check2
+
+- debug: msg="{{ check2.stdout.split('\n') }}"
+
+
+- name: check the Dockerfile
+  shell: cat /var/spool/docker/app0/build/Dockerfile
+  register: check3
+
+- debug: msg="{{ check3.stdout.split('\n') }}"
+
+
+- name: check network connections
+  shell: ss -ntpa
+  register: check4
+
+- debug: msg="{{ check4.stdout.split('\n') }}"
+
+
+- name: check the docker image root directory
+  shell: ls -lRa /var/spool/docker/app0/build
+  register: check5
+
+- debug: msg="{{ check5.stdout.split('\n') }}"

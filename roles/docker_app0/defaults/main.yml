@@ -9,8 +9,7 @@ docker_app_build_root: /var/spool/docker
 docker_app_version: 'v0.0.1'
 
 docker_app_conf: web.conf
-docker_app_src: 
-    - web.py
+docker_app_src:  web.py
 
 docker_app_src_pref: srv/app
 docker_app_conf_pref: srv/app/conf

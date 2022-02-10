@@ -127,6 +127,14 @@
     state: present
     line: "host    all             all             172.17.0.1/16            md5"
 
+- name: Allow docker-containers connection
+  ansible.builtin.lineinfile:
+    path: "{{ postgresql_pgdata }}/data/postgresql.conf"
+    state: present
+    insertafter: "#listen_addresses ="
+    regex: "^listen_address = "
+    line: "listen_addresses = '*'          # what IP address(es) to listen on;"
+
 - name: Create service
   register: create_service_result
   ansible.builtin.template:

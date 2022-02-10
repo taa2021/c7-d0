@@ -1,4 +1,3 @@
-yc_iam_token
+docker app0
 =========
-
-Get yandex.cloud token
+Deploy docker application app0

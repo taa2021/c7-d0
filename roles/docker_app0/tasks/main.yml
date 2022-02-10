@@ -94,19 +94,36 @@
 
 - name: Copy app src
   ansible.builtin.copy:
-    src:  "{{ docker_app_build_root }}/{{ docker_app_name }}/tmp/{{ item }}"
-    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/{{ docker_app_src_pref }}/"
+    src:  "{{ docker_app_build_root }}/{{ docker_app_name }}/tmp/{{ docker_app_src }}"
+    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/{{ docker_app_src_pref }}/app.py"
     remote_src: True
     owner: root
     group: root
     mode: 0440
-  with_items: "{{ docker_app_src }}"
 
+- name: Patch-00 app src
+  ansible.builtin.replace:
+    path: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/{{ docker_app_src_pref }}/app.py"
+    regexp: '(get_)\n(db_config)'
+    replace: '\1\2'
+
+- name: Set the iptables policy for the FORWARD chain to ACCEPT
+  ansible.builtin.iptables:
+    chain: FORWARD
+    policy: ACCEPT
 
 - name: Copy Dockerfile
   ansible.builtin.template:
     src:  Dockerfile.j2
     dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/Dockerfile"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy Dockerignore
+  ansible.builtin.copy:
+    src:  ".dockerignore"
+    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/"
     owner: root
     group: root
     mode: '0644'

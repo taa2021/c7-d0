@@ -12,8 +12,9 @@
     docker_app_db_user: db_admin
 
   roles:
-#    - common
-#    - postgresql
-#    - postgresql_app0
-#    - docker
+    - common
+    - postgresql
+    - postgresql_app0
+    - docker
     - docker_app0
+    - test

@@ -1,0 +1,28 @@
+
+PLAY [SF ansible tasks - provision] ********************************************************************************
+
+TASK [Gathering Facts] *********************************************************************************************
+ok: [localhost]
+
+TASK [tf_s3_backend : Provision Terraform S3 backend] **************************************************************
+ok: [localhost]
+
+TASK [tf_s3_backend : Debug print S3 backend bucket name] **********************************************************
+ok: [localhost] => {
+    "msg": "bucket--cac96fdabe53422b"
+}
+
+TASK [tf_app : Provision Terraform App] ****************************************************************************
+ok: [localhost]
+
+TASK [tf_app : Debug print cloud hosts] ****************************************************************************
+ok: [localhost] => {
+    "msg": "51.250.3.100"
+}
+
+TASK [write inventory-deploy] **************************************************************************************
+ok: [localhost -> localhost]
+
+PLAY RECAP *********************************************************************************************************
+localhost                  : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

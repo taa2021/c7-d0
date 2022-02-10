@@ -6,14 +6,13 @@ packages:
 - ca-certificates
 - curl
 - python3
+- gnupg
 
 packages_CentOS:
-- gnupg
 - redhat-lsb-core
 - glibc-langpack-ru
 - glibc-locale-source
 
 packages_Ubuntu:
-- gnupg
 - lsb-release
 - language-pack-ru

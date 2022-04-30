@@ -1,0 +1,26 @@
+[bastion]
+{{ tf_app.outputs.hosts.value[0]['addr-ext'] }}
+
+[bastionl]
+{{ tf_app.outputs.hosts.value[0]['addr-int'] }}
+
+[dmanagers]
+{{ tf_app.outputs.hosts.value[0]['addr-int'] }}
+
+[dworkers]
+{% for host in tf_app.outputs.hosts.value %}
+{% if loop.index > 1 %}
+{{ host['addr-int'] }}
+{% endif %}
+{% endfor %}
+
+[ansibled]
+{% for host in tf_app.outputs.hosts.value %}
+{{ host['addr-int'] }}
+{% endfor %}
+
+[all:vars]
+ansible_ssh_user=ruser0
+ansible_ssh_common_args='-F {{ playbook_dir }}/{{ var_out__inventory_ssh_config }}'
+var_priv_subnet="192.168.1.0/28"
+var_priv_proxy_addr="{{ tf_app.outputs.hosts.value[0]['addr-int'] }}"

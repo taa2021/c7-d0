@@ -31,12 +31,12 @@
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | cloud-tags | The Terraform object's cloud tags/labels | `map(any)` | `{}` | no |
-| cpu-fraq | The reserved share of processor (%) for the deployable host | `number` | `5` | no |
+| cpu-fraq | The reserved share of processor (%) for the deployable host | `number` | `20` | no |
 | has-eaddr | Predicate: is needed external Internet IP-address for the deployable host? | `bool` | `false` | no |
 | image-family | Cloud image family for the deployable host | `string` | n/a | yes |
 | is-preemptible | Predicate: is cheaper setup config with sudden shutdown for the deployable host? | `bool` | `true` | no |
 | login | The (ssh) user login-name for the deployable host's default user account | `string` | `"user"` | no |
-| mem | RAM size (GiB) for the deployable host | `number` | `1` | no |
+| mem | RAM size (GiB) for the deployable host | `number` | `4` | no |
 | ncpu | Amount of CPU's for the deployable host | `number` | `2` | no |
 | platform | Cloud platform for the deployable host | `string` | `"standard-v1"` | no |
 | region | Cloud zone/region for the deployable host | `string` | n/a | yes |

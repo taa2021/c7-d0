@@ -1,20 +1,53 @@
 ---
-- name: SF ansible tasks - deploy
-  hosts: all
+- name: will wait till reachable
+  hosts: ansibled
+  remote_user: ruser0
+  gather_facts: no # important
+  roles:
+    - wait_for
+
+- name: SF ansible tasks - setup bastion
+  hosts: bastion
   remote_user: ruser0
   become: true
-  vars:
-    postgresql_version: 12
-    postgresql_pgdata:  /var/spool/pgdata/12
-    docker_app_name: app0
-    docker_app_db_host: 172.17.0.1
-    docker_app_db_name: db_app0
-    docker_app_db_user: db_admin
-
   roles:
+    - proxy
+    - gresolver
+
+- name: SF ansible tasks - bootstrap
+  hosts: ansibled
+  remote_user: ruser0
+  become: true
+  roles:
+    - proxified_pkg
     - common
-    - postgresql
-    - postgresql_app0
+
+- name: SF ansible tasks - deploy docker
+  hosts: dmanagers, dworkers
+  remote_user: ruser0
+  become: true
+  roles:
     - docker
+    - proxified_docker
+#    - test
+
+- name: SF ansible tasks - setup docker swarm managers
+  hosts: dmanagers
+  remote_user: ruser0
+  become: true
+  roles:
+    - docker_manager
+
+- name: SF ansible tasks - setup docker swarm workers
+  hosts: dworkers
+  remote_user: ruser0
+  become: true
+  roles:
+    - docker_worker
+
+- name: SF ansible tasks - deploy docker swarm app
+  hosts: dmanagers
+  remote_user: ruser0
+  become: true
+  roles:
     - docker_app0
-    - test

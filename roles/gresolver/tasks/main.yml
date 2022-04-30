@@ -1,0 +1,7 @@
+---
+- name: configure backup resolver
+  ansible.builtin.lineinfile:
+    path: /etc/resolv.conf
+    state: present
+    regexp: '^nameserver 8\.8\.8\.8'
+    line: "nameserver 8.8.8.8"

@@ -1,0 +1,15 @@
+---
+
+- name: Init a new swarm with default parameters
+  community.docker.docker_swarm:
+    listen_addr: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    state: present
+  register: docker_manager
+
+- name: Save join token
+  set_fact: join_token="{{ docker_manager['swarm_facts']['JoinTokens'] }}"
+
+- name: Set node availability - drain
+  community.docker.docker_node:
+    hostname:  "{{ ansible_hostname }}"
+    availability: drain

@@ -1,0 +1,7 @@
+---
+# This will install, configure service
+
+- import_tasks: install.yml
+- import_tasks: enable.yml
+- import_tasks: config.yml
+- import_tasks: start.yml

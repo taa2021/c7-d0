@@ -1,161 +1,39 @@
 ---
 
-- name: Change ownership of a directory - docker build root
+
+
+- name: Create app root dir
   ansible.builtin.file:
     path: "{{ docker_app_build_root }}/{{ docker_app_name }}"
     state: directory
     owner: root
     group: root
-    mode: '0755'
-
-- name: Change ownership of a directory - docker build
-  ansible.builtin.file:
-    path: "{{ docker_app_build_root }}/{{ docker_app_name }}/build"
-    state: directory
-    owner: root
-    group: root
-    mode: '0700'
-
-- name: Change ownership of a directory - docker build src
-  ansible.builtin.file:
-    path: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/{{ docker_app_src_pref }}/"
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-
-- name: Change ownership of a directory - docker build conf
-  ansible.builtin.file:
-    path: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/{{ docker_app_conf_pref }}/"
-    state: directory
-    owner: root
-    group: root
     mode: '0750'
 
-- name: Change ownership of a directory - docker tmp
-  ansible.builtin.file:
-    path: "{{ docker_app_build_root }}/{{ docker_app_name }}/tmp"
-    state: directory
-    owner: nobody
-    group: nogroup
-    mode: '0700'
-
-- name: Clone of the app repo
-  ansible.builtin.git:
-    repo: "{{ docker_app_git_url }}"
-    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/tmp"
-    force: yes
-    clone: yes
-    version: main
-
-- name: Set DB host
-  ini_file:
-    path: "{{ docker_app_build_root }}/{{ docker_app_name }}/tmp/{{ docker_app_conf }}"
-    section: database
-    no_extra_spaces: no
-    option: db_host
-    value: "'{{ docker_app_db_host }}'"
-
-- name: Set DB name
-  ini_file:
-    path: "{{ docker_app_build_root }}/{{ docker_app_name }}/tmp/{{ docker_app_conf }}"
-    section: database
-    no_extra_spaces: no
-    option: db_name
-    value: "'{{ docker_app_db_name }}'"
-
-- name: Set DB user
-  ini_file:
-    path: "{{ docker_app_build_root }}/{{ docker_app_name }}/tmp/{{ docker_app_conf }}"
-    section: database
-    no_extra_spaces: no
-    option: db_user
-    value: "'{{ docker_app_db_user }}'"
-
-# Смиряемся с обстоятельствами
-# и выполняем требования к развертыванию приложения -
-# пароль задается именно в файле конфигурации и напрямую "вшивается" в docker-образ
-- name: Set DB password
-  ini_file:
-    path: "{{ docker_app_build_root }}/{{ docker_app_name }}/tmp/{{ docker_app_conf }}"
-    section: database
-    no_extra_spaces: no
-    option: db_password
-    value: "'{{ lookup('passwordstore', docker_app_name + '/' + docker_app_db_user + ' create=true')}}'"
-
-- name: Copy app config
+- name: Copy app compose file
   ansible.builtin.copy:
-    src:  "{{ docker_app_build_root }}/{{ docker_app_name }}/tmp/{{ docker_app_conf }}"
-    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/{{ docker_app_conf_pref }}/"
-    remote_src: True
+    src:  "docker-compose.yml"
+    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/"
+    owner: root
+    group: root
+    mode: 0440 
+
+- name: Copy app env file
+  ansible.builtin.copy:
+    src:  "env-file"
+    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/.env"
     owner: root
     group: root
     mode: 0440
 
-- name: Copy app src
-  ansible.builtin.copy:
-    src:  "{{ docker_app_build_root }}/{{ docker_app_name }}/tmp/{{ docker_app_src }}"
-    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/{{ docker_app_src_pref }}/app.py"
-    remote_src: True
-    owner: root
-    group: root
-    mode: 0440
+#- name: Install docker-compose app
+#  community.docker.docker_compose:
+#    project_src: "{{ docker_app_build_root }}/{{ docker_app_name }}/"
+#    state: present
 
-- name: Patch-00 app src
-  ansible.builtin.replace:
-    path: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/{{ docker_app_src_pref }}/app.py"
-    regexp: '(get_)\n(db_config)'
-    replace: '\1\2'
-
-- name: Set the iptables policy for the FORWARD chain to ACCEPT
-  ansible.builtin.iptables:
-    chain: FORWARD
-    policy: ACCEPT
-
-- name: Copy Dockerfile
-  ansible.builtin.template:
-    src:  Dockerfile.j2
-    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/Dockerfile"
-    owner: root
-    group: root
-    mode: '0644'
-
-- name: Copy Dockerignore
-  ansible.builtin.copy:
-    src:  ".dockerignore"
-    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/build/"
-    owner: root
-    group: root
-    mode: '0644'
-
-- name: Build image and with build args
-  docker_image:
-    name: "{{ docker_app_name }}:{{ docker_app_version }}"
-    build:
-      path: "{{ docker_app_build_root }}/{{ docker_app_name }}/build"
-      pull: yes
-      args:
-        listen_port: 80
-    force_tag: yes
-    source: build
-  register: docker_image
-
-- name: Restart a container
-  docker_container:
-    name:  "{{ docker_app_name }}_{{ docker_app_version }}_test"
-    image: "{{ docker_app_name }}:{{ docker_app_version }}"
-    state: started
-    detach: yes
-#    restart: yes
-    ports:
-     - "8080:80"
-
-
-- name: Debug fetch Dockerfile to local out
-  ansible.builtin.fetch:
-    src:  "{{ docker_app_build_root }}/{{ docker_app_name }}/build/Dockerfile"
-    dest: "{{ playbook_dir }}/out/"
-    flat: yes
-    owner: root
-    group: root
-    mode: '0644'
+- name: Deploy stack from a compose file
+  community.docker.docker_stack:
+    state: present
+    name: "{{ docker_app_name }}"
+    compose:
+      - "{{ docker_app_build_root }}/{{ docker_app_name }}/docker-compose.yml"

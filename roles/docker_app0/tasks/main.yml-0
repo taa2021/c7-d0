@@ -1,0 +1,40 @@
+---
+
+- name: Enable docker-compose as exec file
+  ansible.builtin.copy:
+    src:  /usr/libexec/docker/cli-plugins/docker-compose
+    dest: /usr/bin
+    remote_src: true
+    owner: root
+    group: docker
+    mode: 0750
+
+
+- name: Create app root dir
+  ansible.builtin.file:
+    path: "{{ docker_app_build_root }}/{{ docker_app_name }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: Copy app compose file
+  ansible.builtin.copy:
+    src:  "docker-compose.yml"
+    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/"
+    owner: root
+    group: root
+    mode: 0440 
+
+- name: Copy app env file
+  ansible.builtin.copy:
+    src:  "env-file"
+    dest: "{{ docker_app_build_root }}/{{ docker_app_name }}/.env"
+    owner: root
+    group: root
+    mode: 0440
+
+- name: Install docker-compose app
+  community.docker.docker_compose:
+    project_src: "{{ docker_app_build_root }}/{{ docker_app_name }}/"
+    state: present

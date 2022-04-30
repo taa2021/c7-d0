@@ -1,7 +1,8 @@
 output "hosts" {
   description = "The deployed hosts' external IPv4 addresses (separated with '\\n')"
 
-  value = join("\n", module.hosts[*].addr-ext)
+  value = module.hosts[*]
+  #join("\n", module.hosts[*].addr-ext)
 }
 
 /*

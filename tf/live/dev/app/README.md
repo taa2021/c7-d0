@@ -48,7 +48,7 @@ terraform output -json"
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | cloud-tags | The Terraform object's cloud tags/labels | `map(any)` | ```{ "environment": "dev", "terraform": true }``` | no |
-| hosts | The setting templates for the cloud hosts | ```list( object({ image-family = string has-eaddr = bool login = string }))``` | ```[ { "has-eaddr": true, "image-family": "ubuntu-2004-lts", "login": "ruser0" } ]``` | no |
+| hosts | The setting templates for the cloud hosts | ```list( object({ image-family = string has-eaddr = bool login = string }))``` | ```[ { "has-eaddr": true, "image-family": "ubuntu-2004-lts", "login": "ruser0" }, { "has-eaddr": false, "image-family": "ubuntu-2004-lts", "login": "ruser0" }, { "has-eaddr": false, "image-family": "ubuntu-2004-lts", "login": "ruser0" } ]``` | no |
 | ssh\_pub\_key\_default | The ssh public key for the cloud hosts | `string` | n/a | yes |
 | subnet | Yandex.Cloud zone default | `string` | `"192.168.1.0/28"` | no |
 | yc\_cloud\_id | Yandex.Cloud ID default | `string` | n/a | yes |

@@ -1,0 +1,2 @@
+var_out__inventory_file: ansible-inventory.txt
+var_out__inventory_ssh_config: ssh-via-bastion.config

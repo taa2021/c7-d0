@@ -1,0 +1,9 @@
+---
+
+- name: Add swarm nodes
+  community.docker.docker_swarm:
+    state: join
+    join_token: "{{ hostvars[item]['join_token']['Worker'] }}"
+    listen_addr: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+    remote_addrs: "{{ item }}"
+  loop: "{{ groups['dmanagers'] }}"

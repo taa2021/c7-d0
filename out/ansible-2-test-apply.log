@@ -1,124 +1,138 @@
 
-PLAY [SF ansible tasks - deploy] ***********************************************************************************
+PLAY [SF ansible tasks - deploy] ************************************************************************************************************************************************************************************************************
 
-TASK [Gathering Facts] *********************************************************************************************
-ok: [51.250.3.100]
+TASK [test : check docker stack ls] *********************************************************************************************************************************************************************************************************
+changed: [51.250.76.201]
 
-TASK [test : Install test helpers] *********************************************************************************
-ok: [51.250.3.100] => (item=wget)
-ok: [51.250.3.100] => (item=html2text)
-
-TASK [test : check site frontend] **********************************************************************************
-changed: [51.250.3.100]
-
-TASK [test : debug] ************************************************************************************************
-ok: [51.250.3.100] => {
+TASK [test : debug] *************************************************************************************************************************************************************************************************************************
+ok: [51.250.76.201] => {
     "msg": [
-        "****** Hello there! ******",
-        "Everything is OK! DB Query was completed by db_admin user"
+        "NAME      SERVICES   ORCHESTRATOR",
+        "app0      15         Swarm"
     ]
 }
 
-TASK [test : check docker ps -a] ***********************************************************************************
-changed: [51.250.3.100]
+TASK [test : check docker stack ps app0] ****************************************************************************************************************************************************************************************************
+changed: [51.250.76.201]
 
-TASK [test : debug] ************************************************************************************************
-ok: [51.250.3.100] => {
+TASK [test : debug] *************************************************************************************************************************************************************************************************************************
+ok: [51.250.76.201] => {
     "msg": [
-        "CONTAINER ID   IMAGE         COMMAND                  CREATED       STATUS       PORTS                  NAMES",
-        "2482bd051eda   app0:v0.0.1   \"python3 -m flask ru…\"   2 hours ago   Up 2 hours   0.0.0.0:8080->80/tcp   app0_v0.0.1_test"
+        "ID             NAME                     IMAGE                                NODE                   DESIRED STATE   CURRENT STATE                 ERROR     PORTS",
+        "kia3i67i3f9c   app0_carts-db.1          mongo:3.4                            fhm0imefl1ic95j5ck07   Running         Running about an hour ago               ",
+        "p93j9kcaoq7p   app0_carts.1             weaveworksdemos/carts:0.4.8          fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "skdfg3ni3igy   app0_catalogue-db.1      weaveworksdemos/catalogue-db:0.3.0   fhm0imefl1ic95j5ck07   Running         Running about an hour ago               ",
+        "zjddi3e59caa   app0_catalogue.1         weaveworksdemos/catalogue:0.3.5      fhm0imefl1ic95j5ck07   Running         Running about an hour ago               ",
+        "utycs1nvta61   app0_edge-router.1       weaveworksdemos/edge-router:0.1.1    fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "pc7e7dg4lu0p    \\_ app0_edge-router.1   weaveworksdemos/edge-router:0.1.1    fhmedk34m207fj80o9te   Shutdown        Shutdown about an hour ago              ",
+        "rcxvzl9fr1dk   app0_front-end.1         weaveworksdemos/front-end:0.3.12     fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "2j4jp277wh37   app0_orders-db.1         mongo:3.4                            fhm0imefl1ic95j5ck07   Running         Running about an hour ago               ",
+        "p237yzth5n7t   app0_orders.1            weaveworksdemos/orders:0.4.7         fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "rfsb6tvah2s2   app0_payment.1           weaveworksdemos/payment:0.4.3        fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "qyne4yj8oqwt   app0_queue-master.1      weaveworksdemos/queue-master:0.3.1   fhm0imefl1ic95j5ck07   Running         Running about an hour ago               ",
+        "spbnmu94vgso   app0_rabbitmq.1          rabbitmq:3.6.8                       fhm0imefl1ic95j5ck07   Running         Running about an hour ago               ",
+        "knrpc1d4ee3q   app0_shipping.1          weaveworksdemos/shipping:0.4.8       fhm0imefl1ic95j5ck07   Running         Running about an hour ago               ",
+        "wjrsl3sj6jdj   app0_user-db.1           weaveworksdemos/user-db:0.4.0        fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "27hae0u6dacy   app0_user-sim.1          weaveworksdemos/load-test:0.1.1      fhmedk34m207fj80o9te   Running         Running 28 seconds ago                  ",
+        "nr1qrzgyrnrp    \\_ app0_user-sim.1      weaveworksdemos/load-test:0.1.1      fhmedk34m207fj80o9te   Shutdown        Complete 34 seconds ago                 ",
+        "h64hx7do7dfd    \\_ app0_user-sim.1      weaveworksdemos/load-test:0.1.1      fhmedk34m207fj80o9te   Shutdown        Complete about a minute ago             ",
+        "sbssp3ehee9k    \\_ app0_user-sim.1      weaveworksdemos/load-test:0.1.1      fhmedk34m207fj80o9te   Shutdown        Complete 2 minutes ago                  ",
+        "x6j5p79m2nt4    \\_ app0_user-sim.1      weaveworksdemos/load-test:0.1.1      fhmedk34m207fj80o9te   Shutdown        Complete 4 minutes ago                  ",
+        "xrdd1hbrixrg   app0_user.1              weaveworksdemos/user:0.4.4           fhm0imefl1ic95j5ck07   Running         Running about an hour ago               "
     ]
 }
 
-TASK [test : check docker image] ***********************************************************************************
-changed: [51.250.3.100]
+TASK [test : check docker stack services app0] **********************************************************************************************************************************************************************************************
+changed: [51.250.76.201]
 
-TASK [test : debug] ************************************************************************************************
-ok: [51.250.3.100] => {
+TASK [test : debug] *************************************************************************************************************************************************************************************************************************
+ok: [51.250.76.201] => {
     "msg": [
-        ""
+        "ID             NAME                MODE         REPLICAS   IMAGE                                PORTS",
+        "vkqcjx2keyup   app0_carts          replicated   1/1        weaveworksdemos/carts:0.4.8          ",
+        "epq6eyptba68   app0_carts-db       replicated   1/1        mongo:3.4                            ",
+        "dw68mph08gl8   app0_catalogue      replicated   1/1        weaveworksdemos/catalogue:0.3.5      ",
+        "vgvsg1btakjm   app0_catalogue-db   replicated   1/1        weaveworksdemos/catalogue-db:0.3.0   ",
+        "yandfjwa1n0w   app0_edge-router    replicated   1/1        weaveworksdemos/edge-router:0.1.1    *:80->80/tcp",
+        "rnejmd3jvwi5   app0_front-end      replicated   1/1        weaveworksdemos/front-end:0.3.12     ",
+        "illrpyz12yod   app0_orders         replicated   1/1        weaveworksdemos/orders:0.4.7         ",
+        "otqz5gyklnqe   app0_orders-db      replicated   1/1        mongo:3.4                            ",
+        "avpxkmqkngr5   app0_payment        replicated   1/1        weaveworksdemos/payment:0.4.3        ",
+        "ube28x446374   app0_queue-master   replicated   1/1        weaveworksdemos/queue-master:0.3.1   ",
+        "1jo09trwezcc   app0_rabbitmq       replicated   1/1        rabbitmq:3.6.8                       ",
+        "8npqhvd7p15q   app0_shipping       replicated   1/1        weaveworksdemos/shipping:0.4.8       ",
+        "uzq1948soufw   app0_user           replicated   1/1        weaveworksdemos/user:0.4.4           ",
+        "w17tuj0g39dv   app0_user-db        replicated   1/1        weaveworksdemos/user-db:0.4.0        ",
+        "pamau32vjb7d   app0_user-sim       replicated   1/1        weaveworksdemos/load-test:0.1.1      "
     ]
 }
 
-TASK [test : check the Dockerfile] *********************************************************************************
-changed: [51.250.3.100]
+TASK [test : check docker node ls (manager is must be drained)] *****************************************************************************************************************************************************************************
+changed: [51.250.76.201]
 
-TASK [test : debug] ************************************************************************************************
-ok: [51.250.3.100] => {
+TASK [test : debug] *************************************************************************************************************************************************************************************************************************
+ok: [51.250.76.201] => {
     "msg": [
-        "FROM python:3.10-alpine",
-        "",
-        "RUN \\",
-        " apk add --no-cache postgresql-libs && \\",
-        " apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \\",
-        " python3 -m pip install flask psycopg2 configparser --no-cache-dir && \\",
-        " apk --purge del .build-deps",
-        "",
-        "COPY . .",
-        "",
-        "WORKDIR srv/app",
-        "",
-        "ENTRYPOINT [ \"python3\", \"-m\", \"flask\", \"run\" ]",
-        "CMD [ \"--host=0.0.0.0\", \"--port=80\" ]",
-        "",
-        "EXPOSE 80"
+        "ID                            HOSTNAME               STATUS    AVAILABILITY   MANAGER STATUS   ENGINE VERSION",
+        "8cdo1fa2l1869beannqzif2ao     fhm0imefl1ic95j5ck07   Ready     Active                          20.10.14",
+        "c5ef2qnzh0thpvxwboftsltrg *   fhmcoumlm03m4i6vvlgr   Ready     Drain          Leader           20.10.14",
+        "7xiuqe5m53ewk9bzqrge94j4v     fhmedk34m207fj80o9te   Ready     Active                          20.10.14"
     ]
 }
 
-TASK [test : check network connections] ****************************************************************************
-changed: [51.250.3.100]
+TASK [test : check docker node ps -- on all nodes (manager is must be drained)] *************************************************************************************************************************************************************
+changed: [51.250.76.201]
 
-TASK [test : debug] ************************************************************************************************
-ok: [51.250.3.100] => {
+TASK [test : debug] *************************************************************************************************************************************************************************************************************************
+ok: [51.250.76.201] => {
     "msg": [
-        "State       Recv-Q   Send-Q      Local Address:Port        Peer Address:Port    Process                                                                         ",
-        "LISTEN      0        244               0.0.0.0:5432             0.0.0.0:*        users:((\"postgres\",pid=14008,fd=3))                                            ",
-        "LISTEN      0        4096              0.0.0.0:8080             0.0.0.0:*        users:((\"docker-proxy\",pid=19134,fd=4))                                        ",
-        "LISTEN      0        4096        127.0.0.53%lo:53               0.0.0.0:*        users:((\"systemd-resolve\",pid=376,fd=13))                                      ",
-        "LISTEN      0        128               0.0.0.0:22               0.0.0.0:*        users:((\"sshd\",pid=539,fd=3))                                                  ",
-        "ESTAB       0        0            192.168.1.10:22         85.140.12.156:14514    users:((\"sshd\",pid=12530,fd=4),(\"sshd\",pid=12490,fd=4))                        ",
-        "TIME-WAIT   0        0               127.0.0.1:8080           127.0.0.1:42568                                                                                   ",
-        "ESTAB       0        0            192.168.1.10:22         152.70.128.26:52704    users:((\"sshd\",pid=36416,fd=4),(\"sshd\",pid=36384,fd=4))                        ",
-        "LISTEN      0        244                  [::]:5432                [::]:*        users:((\"postgres\",pid=14008,fd=4))                                            ",
-        "LISTEN      0        128                  [::]:22                  [::]:*        users:((\"sshd\",pid=539,fd=4))                                                  "
+        "-------NODE: 8cdo1fa2l1869beannqzif2ao ------",
+        "ID             NAME                  IMAGE                                NODE                   DESIRED STATE   CURRENT STATE               ERROR     PORTS",
+        "kia3i67i3f9c   app0_carts-db.1       mongo:3.4                            fhm0imefl1ic95j5ck07   Running         Running about an hour ago             ",
+        "skdfg3ni3igy   app0_catalogue-db.1   weaveworksdemos/catalogue-db:0.3.0   fhm0imefl1ic95j5ck07   Running         Running about an hour ago             ",
+        "zjddi3e59caa   app0_catalogue.1      weaveworksdemos/catalogue:0.3.5      fhm0imefl1ic95j5ck07   Running         Running about an hour ago             ",
+        "2j4jp277wh37   app0_orders-db.1      mongo:3.4                            fhm0imefl1ic95j5ck07   Running         Running about an hour ago             ",
+        "qyne4yj8oqwt   app0_queue-master.1   weaveworksdemos/queue-master:0.3.1   fhm0imefl1ic95j5ck07   Running         Running about an hour ago             ",
+        "spbnmu94vgso   app0_rabbitmq.1       rabbitmq:3.6.8                       fhm0imefl1ic95j5ck07   Running         Running about an hour ago             ",
+        "knrpc1d4ee3q   app0_shipping.1       weaveworksdemos/shipping:0.4.8       fhm0imefl1ic95j5ck07   Running         Running about an hour ago             ",
+        "xrdd1hbrixrg   app0_user.1           weaveworksdemos/user:0.4.4           fhm0imefl1ic95j5ck07   Running         Running about an hour ago             ",
+        "-------NODE: c5ef2qnzh0thpvxwboftsltrg ------",
+        "ID        NAME      IMAGE     NODE      DESIRED STATE   CURRENT STATE   ERROR     PORTS",
+        "-------NODE: 7xiuqe5m53ewk9bzqrge94j4v ------",
+        "ID             NAME                     IMAGE                               NODE                   DESIRED STATE   CURRENT STATE                 ERROR     PORTS",
+        "p93j9kcaoq7p   app0_carts.1             weaveworksdemos/carts:0.4.8         fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "utycs1nvta61   app0_edge-router.1       weaveworksdemos/edge-router:0.1.1   fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "pc7e7dg4lu0p    \\_ app0_edge-router.1   weaveworksdemos/edge-router:0.1.1   fhmedk34m207fj80o9te   Shutdown        Shutdown about an hour ago              ",
+        "rcxvzl9fr1dk   app0_front-end.1         weaveworksdemos/front-end:0.3.12    fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "p237yzth5n7t   app0_orders.1            weaveworksdemos/orders:0.4.7        fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "rfsb6tvah2s2   app0_payment.1           weaveworksdemos/payment:0.4.3       fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "wjrsl3sj6jdj   app0_user-db.1           weaveworksdemos/user-db:0.4.0       fhmedk34m207fj80o9te   Running         Running about an hour ago               ",
+        "27hae0u6dacy   app0_user-sim.1          weaveworksdemos/load-test:0.1.1     fhmedk34m207fj80o9te   Running         Running 39 seconds ago                  ",
+        "nr1qrzgyrnrp    \\_ app0_user-sim.1      weaveworksdemos/load-test:0.1.1     fhmedk34m207fj80o9te   Shutdown        Complete 46 seconds ago                 ",
+        "h64hx7do7dfd    \\_ app0_user-sim.1      weaveworksdemos/load-test:0.1.1     fhmedk34m207fj80o9te   Shutdown        Complete about a minute ago             ",
+        "sbssp3ehee9k    \\_ app0_user-sim.1      weaveworksdemos/load-test:0.1.1     fhmedk34m207fj80o9te   Shutdown        Complete 3 minutes ago                  ",
+        "x6j5p79m2nt4    \\_ app0_user-sim.1      weaveworksdemos/load-test:0.1.1     fhmedk34m207fj80o9te   Shutdown        Complete 4 minutes ago                  "
     ]
 }
 
-TASK [test : check the docker image root directory] ****************************************************************
-changed: [51.250.3.100]
+TASK [test : Send site] *********************************************************************************************************************************************************************************************************************
+changed: [51.250.76.201 -> localhost]
 
-TASK [test : debug] ************************************************************************************************
-ok: [51.250.3.100] => {
+TASK [test : debug] *************************************************************************************************************************************************************************************************************************
+ok: [51.250.76.201] => {
     "msg": [
-        "/var/spool/docker/app0/build:",
-        "total 20",
-        "drwx------ 3 root root 4096 Feb 10 16:49 .",
-        "drwxr-xr-x 4 root root 4096 Feb 10 16:48 ..",
-        "-rw-r--r-- 1 root root  372 Feb 10 16:49 Dockerfile",
-        "-rw-r--r-- 1 root root   11 Feb 10 16:49 .dockerignore",
-        "drwxr-xr-x 3 root root 4096 Feb 10 16:48 srv",
+        "[1]We love socks!",
         "",
-        "/var/spool/docker/app0/build/srv:",
-        "total 12",
-        "drwxr-xr-x 3 root root 4096 Feb 10 16:48 .",
-        "drwx------ 3 root root 4096 Feb 10 16:49 ..",
-        "drwxr-xr-x 3 root root 4096 Feb 10 18:36 app",
+        "   Fun fact: Socks were invented by woolly mammoths to keep warm. They",
+        "   died out because stupid humans had to cut their legs off to get their",
+        "   socks.",
         "",
-        "/var/spool/docker/app0/build/srv/app:",
-        "total 16",
-        "drwxr-xr-x 3 root root 4096 Feb 10 18:36 .",
-        "drwxr-xr-x 3 root root 4096 Feb 10 16:48 ..",
-        "-r--r----- 1 root root 1095 Feb 10 18:36 app.py",
-        "drwxr-x--- 2 root root 4096 Feb 10 16:49 conf",
+        "[2]Best prices",
         "",
-        "/var/spool/docker/app0/build/srv/app/conf:",
-        "total 12",
-        "drwxr-x--- 2 root root 4096 Feb 10 16:49 .",
-        "drwxr-xr-x 3 root root 4096 Feb 10 18:36 ..",
-        "-r--r----- 1 root root  125 Feb 10 16:49 web.conf"
+        "   We price check our socks with trained monkeys back at the office."
     ]
 }
 
-PLAY RECAP *********************************************************************************************************
-51.250.3.100               : ok=14   changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+PLAY RECAP **********************************************************************************************************************************************************************************************************************************
+51.250.76.201              : ok=12   changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 

@@ -7,6 +7,8 @@ packages:
 - curl
 - python3
 - gnupg
+- tmux
+- htop
 
 packages_CentOS:
 - redhat-lsb-core

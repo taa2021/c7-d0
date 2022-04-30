@@ -28,7 +28,7 @@ variable "mem" {
   description = "RAM size (GiB) for the deployable host"
 
   type    = number
-  default = 1
+  default = 4
 }
 
 variable "ncpu" {
@@ -42,7 +42,7 @@ variable "cpu-fraq" {
   description = "The reserved share of processor (%) for the deployable host"
 
   type    = number
-  default = 5
+  default = 20
 }
 
 variable "is-preemptible" {

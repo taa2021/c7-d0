@@ -1,0 +1,26 @@
+---
+
+- name: Create env dir
+  ansible.builtin.file:
+    path: "{{ env_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: Copy env file
+  ansible.builtin.template:
+    src:  "env-file.j2"
+    dest: "{{ env_dir }}/{{ env_file }}"
+    owner: root
+    group: root
+    mode: 0440
+
+- name: configure proxy
+  ansible.builtin.ini_file:
+    path: "{{ service_conf_file }}"
+    section: Service
+    option: EnvironmentFile
+    value: "{{ env_dir }}/{{ env_file }}"
+  notify:
+    - restart services

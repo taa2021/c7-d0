@@ -1,0 +1,12 @@
+---
+
+# config file
+package_conf_file: /etc/tinyproxy/tinyproxy.conf
+
+# the os packages for service
+packages:
+- tinyproxy
+
+# the system services for service
+services:
+- tinyproxy

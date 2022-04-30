@@ -1,0 +1,10 @@
+---
+
+# config file
+service_conf_file: /usr/lib/systemd/system/docker.service
+env_dir: /etc/docker
+env_file: service-env
+
+# the system services for service
+services:
+- docker

@@ -7,6 +7,9 @@ packages:
 - docker-ce-cli
 - git
 - python3-docker
+- docker-compose-plugin
+- docker-compose
+- python3-jsondiff
 
 # the system services for service
 services:

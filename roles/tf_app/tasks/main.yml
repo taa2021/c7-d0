@@ -14,6 +14,30 @@
       key: "terraform.tfstate"
   register: tf_app
 
+#- name: Debug print cloud hosts
+#  debug:
+#    msg: "{{ tf_app.outputs.hosts.value }}"
+
+#- name: Debug print out inventory file path
+#  debug:
+#    msg: "{{ playbook_dir }}/{{ var_out__inventry_file }}"
+
+- name: Out inventory file
+  ansible.builtin.template:
+    src:  "ansible-inventory.j2"
+    dest: "{{ playbook_dir }}/{{ var_out__inventory_file }}"
+    #owner: root
+    #group: root
+    mode: '0644'
+
+- name: Out inventory ssh config
+  ansible.builtin.template:
+    src:  "ssh-via-bastion.config.j2"
+    dest: "{{ playbook_dir }}/{{ var_out__inventory_ssh_config }}"
+    #owner: root
+    #group: root
+    mode: '0644'
+
 - name: Debug print cloud hosts
   debug:
     msg: "{{ tf_app.outputs.hosts.value }}"

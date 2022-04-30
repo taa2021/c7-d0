@@ -18,9 +18,9 @@
     - tf_s3_backend
     - tf_app
 
-  tasks:
-    - name: write inventory-deploy
-      local_action:
-        module: copy
-        content: "{{ tf_app.outputs.hosts.value }}\n"
-        dest: ansible-1-deploy-inventory.txt
+#  tasks:
+#    - name: write inventory-deploy
+#      local_action:
+#        module: copy
+#        content: "{{ tf_app.outputs.hosts.value }}\n"
+#        dest: ansible-1-deploy-inventory.txt

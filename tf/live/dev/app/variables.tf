@@ -30,6 +30,16 @@ variable "hosts" {
       has-eaddr    = true
       login        = "ruser0"
     },
+    {
+      image-family = "ubuntu-2004-lts"
+      has-eaddr    = false
+      login        = "ruser0"
+    },
+    {
+      image-family = "ubuntu-2004-lts"
+      has-eaddr    = false
+      login        = "ruser0"
+    },
   ]
 }
 

@@ -1,0 +1,8 @@
+---
+
+- name: Restart service
+  ansible.builtin.service:
+    name: "{{ item }}"
+    daemon_reload: yes
+    state: restarted
+  with_items: "{{ services }}"

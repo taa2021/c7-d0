@@ -1,0 +1,63 @@
+---
+
+- name: Create dir for k8s configs
+  file:
+    path:  /var/spool/k8s/
+    state: directory
+    mode: '0750'
+    owner: root
+    group: root
+  run_once: true
+  delegate_to: "{{ var_k8s_bastion }}"
+
+- name: Fetch k8s cluster config
+  ansible.builtin.fetch:
+    src: /root/.kube/config
+    dest: "k8s/kube-{{ inventory_hostname }}/"
+    flat: yes
+    fail_on_missing: no
+
+#- debug: msg="{{ inventory_hostname }} {{ ansible_hostname }} {{ ansible_default_ipv4.address }}"
+#  delegate_to: localhost
+
+- name: Edit k8s cluseter config
+  become: no
+  connection: local
+  ansible.builtin.replace:
+    path: "k8s/kube-{{ inventory_hostname }}/config"
+    regexp: "^(.*://)(.*)(:.*)$"
+    replace: "\\g<1>{{ ansible_default_ipv4.address }}\\g<3>"
+  ignore_errors: yes
+
+- name: Adapt microk8s cluseter name in config
+  become: no
+  connection: local
+  ansible.builtin.replace:
+    path: "k8s/kube-{{ inventory_hostname }}/config"
+    regexp: "microk8s-cluster"
+    replace: "{{ inventory_hostname }}-cluster"
+  ignore_errors: yes
+
+- name: Create dir for k8s cluster configs
+  file:
+    path:  /var/spool/k8s/
+    state: directory
+    mode: '0700'
+    owner: root
+    group: root
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+- name: "Copy k8s cluster configs to {{ var_k8s_bastion }}"
+  copy:
+    src:  k8s
+    dest: /var/spool/
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+- name: Delete tmp dir for k8s configs
+  become: no
+  connection: local
+  file:
+    path:  k8s
+    state: absent
+  ignore_errors: yes
+  run_once: true

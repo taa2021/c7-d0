@@ -3,18 +3,47 @@ terraform {
     yandex = { source = "yandex-cloud/yandex", version = "~>0.70.0" }
   }
 }
-data "yandex_compute_instance" "hosts" {
-  count = length(var.hosts-ids)
 
-  instance_id = var.hosts-ids[count.index]
+data "yandex_compute_instance" "hosts0" {
+  count = length(var.hosts0-ids)
+
+  instance_id = var.hosts0-ids[count.index]
+}
+
+data "yandex_compute_instance" "hosts1" {
+  count = length(var.hosts1-ids)
+
+  instance_id = var.hosts1-ids[count.index]
+}
+
+data "yandex_compute_instance" "hosts2" {
+  count = length(var.hosts2-ids)
+
+  instance_id = var.hosts2-ids[count.index]
 }
 
 resource "yandex_lb_target_group" "nlb-tg" {
   dynamic "target" {
-    for_each = range(length(var.hosts-ids))
+    for_each = range(length(var.hosts0-ids))
     content {
-      subnet_id = data.yandex_compute_instance.hosts[target.key].network_interface.0.subnet_id
-      address   = data.yandex_compute_instance.hosts[target.key].network_interface.0.ip_address
+      subnet_id = data.yandex_compute_instance.hosts0[target.key].network_interface.0.subnet_id
+      address   = data.yandex_compute_instance.hosts0[target.key].network_interface.0.ip_address
+    }
+  }
+
+  dynamic "target" {
+    for_each = range(length(var.hosts1-ids))
+    content {
+      subnet_id = data.yandex_compute_instance.hosts1[target.key].network_interface.0.subnet_id
+      address   = data.yandex_compute_instance.hosts1[target.key].network_interface.0.ip_address
+    }
+  }
+
+  dynamic "target" {
+    for_each = range(length(var.hosts2-ids))
+    content {
+      subnet_id = data.yandex_compute_instance.hosts2[target.key].network_interface.0.subnet_id
+      address   = data.yandex_compute_instance.hosts2[target.key].network_interface.0.ip_address
     }
   }
 
@@ -30,7 +59,8 @@ resource "yandex_lb_network_load_balancer" "nlb" {
   listener {
     name = "n${random_id.rname[0].hex}"
 
-    port = var.port-outer
+    port        = var.port-outer
+    target_port = var.port-inner
     external_address_spec {
       ip_version = "ipv4"
     }

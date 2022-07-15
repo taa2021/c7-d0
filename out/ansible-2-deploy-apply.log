@@ -1,0 +1,144 @@
+
+PLAY [Checkings...] ************************************************************
+
+TASK [deploy_stage_checking : current stage: dev] ******************************
+Pausing for 7 seconds
+(ctrl+C then 'C' = continue early, ctrl+C then 'A' = abort)
+[[[KPress 'C' to continue the play or 'A' to abort 
+ok: [localhost]
+
+PLAY [Wait till reachable] *****************************************************
+
+TASK [wait_for : Wait 600 seconds for target connection to become reachable/usable] ***
+ok: [dev-worker0]
+ok: [dev-master0]
+ok: [dev-bastion0l]
+
+PLAY [SF ansible tasks - setup k8s logging and monitoring, db, storage pool etc.] ***
+
+TASK [Gathering Facts] *********************************************************
+ok: [dev-master0]
+ok: [dev-bastion0l]
+
+TASK [helm_charts : Create a k8s namespace - srv cluster] **********************
+skipping: [dev-master0] => (item=dev) 
+skipping: [dev-master0] => (item=monitoring) 
+skipping: [dev-master0] => (item=serve) 
+skipping: [dev-master0] => (item=cert-manager) 
+skipping: [dev-master0] => (item=actions-runner-system) 
+skipping: [dev-master0] => (item=actions-runner-app0) 
+skipping: [dev-master0] => (item=piraeus) 
+ok: [dev-bastion0l] => (item=dev)
+ok: [dev-bastion0l] => (item=monitoring)
+ok: [dev-bastion0l] => (item=serve)
+ok: [dev-bastion0l] => (item=cert-manager)
+ok: [dev-bastion0l] => (item=actions-runner-system)
+ok: [dev-bastion0l] => (item=actions-runner-app0)
+ok: [dev-bastion0l] => (item=piraeus)
+
+TASK [helm_charts : Create a k8s PRE object - 0 - grafana datasources - srv cluster] ***
+skipping: [dev-master0] => (item=pre-srv-grafana-0.yml) 
+ok: [dev-bastion0l] => (item=pre-srv-grafana-0.yml)
+
+TASK [helm_charts : Create a k8s PRE object - 1 - grafana dashboards - srv cluster] ***
+skipping: [dev-master0] => (item=grafana-0-srv-nodeexport) 
+skipping: [dev-master0] => (item=grafana-1-srv-log) 
+skipping: [dev-master0] => (item=grafana-2-dev-log) 
+skipping: [dev-master0] => (item=grafana-3-srv-k8s) 
+skipping: [dev-master0] => (item=grafana-4-dev-k8s) 
+skipping: [dev-master0] => (item=grafana-5-alert) 
+ok: [dev-bastion0l] => (item=grafana-0-srv-nodeexport)
+ok: [dev-bastion0l] => (item=grafana-1-srv-log)
+ok: [dev-bastion0l] => (item=grafana-2-dev-log)
+ok: [dev-bastion0l] => (item=grafana-3-srv-k8s)
+ok: [dev-bastion0l] => (item=grafana-4-dev-k8s)
+ok: [dev-bastion0l] => (item=grafana-5-alert)
+
+TASK [helm_charts : Deploy nginx-ingress chart - srv cluster] ******************
+skipping: [dev-master0]
+ok: [dev-bastion0l]
+
+TASK [helm_charts : Deploy loki chart - logs on srv - srv cluster] *************
+skipping: [dev-master0]
+ok: [dev-bastion0l]
+
+TASK [helm_charts : Deploy kube-prometheus chart - mons for srv - srv cluster] ***
+skipping: [dev-master0]
+ok: [dev-bastion0l]
+
+TASK [helm_charts : Deploy loki chart - logs on dev - srv cluster] *************
+skipping: [dev-master0]
+ok: [dev-bastion0l]
+
+TASK [helm_charts : Deploy kube-prometheus chart - mons for dev - srv cluster] ***
+skipping: [dev-master0]
+ok: [dev-bastion0l]
+
+TASK [helm_charts : Deploy grafana chart - srv cluster] ************************
+skipping: [dev-master0]
+ok: [dev-bastion0l]
+
+TASK [helm_charts : Deploy cert-manager chart - srv cluster] *******************
+skipping: [dev-master0]
+ok: [dev-bastion0l]
+
+TASK [helm_charts : Deploy github actions-runner-controller chart - srv cluster] ***
+skipping: [dev-master0]
+ok: [dev-bastion0l]
+
+TASK [helm_charts : Deploy promtail chart - dev cluster] ***********************
+skipping: [dev-bastion0l]
+ok: [dev-master0 -> dev-bastion0l(192.168.33.20)]
+
+TASK [helm_charts : Deploy kube-prometheus chart - dev cluster] ****************
+skipping: [dev-bastion0l]
+ok: [dev-master0 -> dev-bastion0l(192.168.33.20)]
+
+TASK [helm_charts : Deploy piraeus chart - dev cluster] ************************
+skipping: [dev-bastion0l]
+changed: [dev-master0 -> dev-bastion0l(192.168.33.20)]
+
+TASK [helm_charts : Wait for the port drbd-reactor to become open on the master] ***
+skipping: [dev-bastion0l]
+
+TASK [helm_charts : Check the linstor storage pool for the dev cluster] ********
+skipping: [dev-bastion0l]
+ok: [dev-master0 -> dev-bastion0l(192.168.33.20)]
+
+TASK [helm_charts : debug] *****************************************************
+skipping: [dev-bastion0l]
+ok: [dev-master0] => {
+    "msg": [
+        "+------------------------------------------------------------------------------------------------------------------------------+",
+        "| StoragePool          | Node        | Driver   | PoolName  | FreeCapacity | TotalCapacity | CanSnapshots | State | SharedName |",
+        "|==============================================================================================================================|",
+        "| DfltDisklessStorPool | dev-master0 | DISKLESS |           |              |               | False        | Ok    |            |",
+        "| DfltDisklessStorPool | dev-worker0 | DISKLESS |           |              |               | False        | Ok    |            |",
+        "| lvm                  | dev-master0 | LVM      | nbd0pool0 |    11.99 GiB |     20.00 GiB | False        | Ok    |            |",
+        "| lvm                  | dev-worker0 | LVM      | nbd0pool0 |    11.99 GiB |     20.00 GiB | False        | Ok    |            |",
+        "+------------------------------------------------------------------------------------------------------------------------------+"
+    ]
+}
+
+TASK [helm_charts : Create a k8s POST object - srv cluster] ********************
+skipping: [dev-master0] => (item=post-srv-loki-srv.yml) 
+skipping: [dev-master0] => (item=post-srv-loki-dev.yml) 
+skipping: [dev-master0] => (item=post-srv-runner-dev-app0.yml) 
+ok: [dev-bastion0l] => (item=post-srv-loki-srv.yml)
+ok: [dev-bastion0l] => (item=post-srv-loki-dev.yml)
+ok: [dev-bastion0l] => (item=post-srv-runner-dev-app0.yml)
+
+TASK [helm_charts : Create a k8s POST object - dev cluster] ********************
+skipping: [dev-bastion0l] => (item=post-dev-linstor.yml) 
+ok: [dev-master0 -> dev-bastion0l(192.168.33.20)] => (item=post-dev-linstor.yml)
+
+TASK [helm_charts : Deploy postgresql chart - dev cluster] *********************
+skipping: [dev-bastion0l]
+ok: [dev-master0 -> dev-bastion0l(192.168.33.20)]
+
+PLAY RECAP *********************************************************************
+dev-bastion0l              : ok=14   changed=0    unreachable=0    failed=0    skipped=8    rescued=0    ignored=0   
+dev-master0                : ok=9    changed=1    unreachable=0    failed=0    skipped=12   rescued=0    ignored=0   
+dev-worker0                : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+localhost                  : ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

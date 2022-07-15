@@ -1,0 +1,3 @@
+# ----------------------------
+# init
+deploy_stage: "{{ inventory_file | regex_replace('^(.*)\\.([^.]+)(\\.txt)$','\\2') | default('dev') }}"

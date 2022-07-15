@@ -17,6 +17,7 @@ crash.*.log
 # to change depending on the environment.
 #
 *.tfvars
+*.tfplan
 
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
@@ -39,3 +40,13 @@ terraform.rc
 # Ansible
 *.retry
 .vault_pass
+
+# Kubespray - local git clone
+ansible/kubespray
+
+# local tmp dir
+.tmp
+k8s
+
+# bak-files
+*.bak

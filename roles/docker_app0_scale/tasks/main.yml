@@ -1,4 +1,0 @@
----
-
-- name: Docker swarm scale service {{ docker_service_name }} to {{ docker_service_replicas }} relicas
-  shell: "docker service scale {{ docker_service_name }}={{ docker_service_replicas }}"

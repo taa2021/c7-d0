@@ -1,20 +1,29 @@
-output "hosts" {
-  description = "The deployed hosts' external IPv4 addresses (separated with '\\n')"
+output "bastions" {
+  description = "The deployed hosts - bastions"
 
-  value = module.hosts[*]
-  #join("\n", module.hosts[*].addr-ext)
+  value = module.bastions[*]
 }
 
-/*
-output "ehost" {
-  description = "The deployed border host's external IPv4 address"
+output "k8s_masters" {
+  description = "The deployed hosts - k8s masters"
 
-  value = local.host0-addr-ext
+  value = module.k8s-masters[*]
 }
 
-output "ansible-inventory" {
-  description = "The ansible inventory file"
+output "k8s_workers" {
+  description = "The deployed hosts - k8s workers"
 
-  value = local.ansible-inventory
+  value = module.k8s-workers[*]
 }
-*/
+
+output "cidr_subnet" {
+  description = "Local subnet's cidr"
+
+  value = var.subnet
+}
+
+output "app_ext_access" {
+  description = "The App's params for the external access"
+
+  value = { addr = module.k8s-nlb.addr-ext, port = module.k8s-nlb.port-outer, }
+}

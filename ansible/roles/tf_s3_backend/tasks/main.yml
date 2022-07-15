@@ -1,0 +1,12 @@
+---
+
+- name: provision Terraform S3 backend
+  terraform:
+    project_path: "{{ playbook_dir }}/tf/global/tf-state-storage"
+    state: present
+    force_init: true
+  register: tf_s3_backend
+
+- name: debug print S3 backend bucket name
+  debug:
+    msg: "{{ tf_s3_backend.outputs.bucket_name.value }}"

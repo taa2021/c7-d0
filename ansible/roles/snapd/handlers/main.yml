@@ -1,0 +1,7 @@
+---
+
+- name: reload services
+  include_tasks: reload.yml
+
+- name: restart services
+  include_tasks: restart.yml

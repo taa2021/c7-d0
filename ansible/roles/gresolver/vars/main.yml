@@ -1,0 +1,5 @@
+---
+
+# the system services for service
+services:
+- systemd-resolved

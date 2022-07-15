@@ -1,0 +1,32 @@
+---
+
+- name: set fact - destroying
+  ansible.builtin.set_fact:
+    destroying: true
+  tags:
+    - destroy
+    - never
+
+- name: "check: terraform destroying"
+  ansible.builtin.pause:
+    seconds: 300
+  tags:
+    - destroy
+    - never
+
+- include: destroy.yml
+  tags:
+    - destroy
+    - never
+
+- include: plan.yml
+  when: destroying is not defined
+
+- name: "check plan: {{ var_out__tfplan }}"
+  ansible.builtin.pause:
+    seconds: 300
+  when: destroying is not defined
+
+- include: apply.yml
+  when: destroying is not defined
+

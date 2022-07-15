@@ -1,26 +1,48 @@
 ---
+- name: Checkings...
+  hosts: localhost
+  gather_facts: no # important
+  roles:
+    - deploy_stage_checking
+
+
 - name: SF ansible tasks - provision
   hosts: all
   vars:
-    yc_cloud_id:  b1gjilr27b0mqp90rj46
-    yc_folder_id: b1gjo8k8qajfr6ftho2n
     yc_iam_token: "{{ lookup('pipe', 'yc iam create-token') | quote }}"
     ansible_pwd:  "{{ lookup('pipe', 'y') | quote }}"
-    ssh_pub_key_default:  "{{ lookup('file', 'ssh_pub_key_default') | quote }}"
+
+#    yc_cloud_id:  b1gjilr27b0mqp90rj46
+#    yc_folder_id: b1gjo8k8qajfr6ftho2n
+#    ssh_pub_key_default:  "{{ lookup('file', 'in/ssh_pub_key_default') | quote }}"
+#    wg0srv_addr: 192.168.133.1
+#    wg0srv_port: 51820
+#    wg0srv_net:  192.168.133.0/24
+#    yc_subnet: "192.168.33.0/24"
 
   environment:
     TF_VAR_yc_cloud_id:  "{{ yc_cloud_id  }}"
     TF_VAR_yc_folder_id: "{{ yc_folder_id  }}"
     TF_VAR_yc_iam_token: "{{ yc_iam_token }}"
     TF_VAR_ssh_pub_key_default: "{{ ssh_pub_key_default }}"
+    TF_VAR_ssh_login_default: "{{ ssh_login_default }}"
+    TF_VAR_subnet: "{{ yc_subnet }}"
+    TF_VAR_deploy_stage: "{{ deploy_stage }}"
+    TF_VAR_dns_zone_srv: "{{ dns_zone_srv }}"
+    TF_VAR_dns_zone_k8s: "{{ dns_zone_k8s }}"
+    TF_VAR_dns_bastion0_aliases: "{{ dns_bastion0_aliases }}"
+    TF_VAR_app_inner_port: "{{ app_inner_port }}"
+    TF_VAR_prom_port: "{{ prom_port }}"
+    TF_VAR_ingress_port: "{{ ingress_port }}"
+    TF_VAR_dev_k8s_nbd_size: "{{ dev_k8s_nbd_size }}"
+    TF_VAR_dev_k8s_nbd_idlocal: "{{ dev_k8s_nbd_idlocal }}"
 
   roles:
     - tf_s3_backend
     - tf_app
 
-#  tasks:
-#    - name: write inventory-deploy
-#      local_action:
-#        module: copy
-#        content: "{{ tf_app.outputs.hosts.value }}\n"
-#        dest: ansible-1-deploy-inventory.txt
+
+- name: SF ansible tasks - kubespray sync git repo
+  hosts: localhost
+  roles:
+    - git-kubespray

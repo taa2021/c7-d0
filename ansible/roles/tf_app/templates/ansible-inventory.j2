@@ -1,0 +1,87 @@
+[all]
+localhost ansible_host=127.0.0.1
+{% for host in tf_app__result.outputs.bastions.value %}
+{{ deploy_stage }}-bastion{{ loop.index - 1 }}e ansible_host={{ host['addr-ext'] }}
+{% endfor %}
+{% for host in tf_app__result.outputs.bastions.value %}
+{{ deploy_stage }}-bastion{{ loop.index - 1 }}l ansible_host={{ host['addr-int'] }}
+{% endfor %}
+{% for host in tf_app__result.outputs.k8s_masters.value %}
+{{ deploy_stage }}-master{{ loop.index - 1}} ansible_host={{ host['addr-int'] }}  etcd_member_name=etcd{{ loop.index - 1 }}
+{% endfor %}
+{% for host in tf_app__result.outputs.k8s_workers.value %}
+{{ deploy_stage }}-worker{{ loop.index - 1}} ansible_host={{ host['addr-int'] }}
+{% endfor %}
+
+[all:vars]
+# ssh connect params
+ansible_ssh_user="{{ ssh_login_default }}"
+ansible_ssh_common_args="-F {{ var_out__inventory_ssh_config | replace(playbook_dir+'/', '')}}"
+# tf/os params
+var_priv_subnet="{{ tf_app__result.outputs.cidr_subnet.value }}"
+var_priv_proxy_addr="{{ deploy_stage }}-bastion0l.{{ dns_zone_srv | regex_replace('\.$','') }}"
+var_priv_dns="{{ tf_app__result.outputs.cidr_subnet.value | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('2') | ansible.utils.ipaddr('address') }}"
+http_proxy="http://{{ deploy_stage }}-bastion0l.{{ dns_zone_srv | regex_replace('\.$','') }}:8888"
+https_proxy="http://{{ deploy_stage }}-bastion0l.{{ dns_zone_srv | regex_replace('\.$','') }}:8888"
+# wireguard server params
+wg0srv_addr="{{ wg0srv_addr }}"
+wg0srv_port="{{ wg0srv_port }}"
+wg0srv_net="{{ wg0srv_net }}"
+# k8s
+var_k8s_bastion="{{ deploy_stage }}-bastion0l"
+var_k8s_cluster_master="{{ deploy_stage }}-master0"
+# dns
+dns_zone_srv="{{ dns_zone_srv | regex_replace('\.$','') }}"
+dns_zone_k8s="{{ dns_zone_k8s | regex_replace('\.$','') }}"
+# app
+app_inner_port="{{ app_inner_port }}"
+app_ext_url="http{% if tf_app__result.outputs.app_ext_access.value.port == 443 %}s{% endif %}://{{ tf_app__result.outputs.app_ext_access.value.addr }}"
+prom_port="{{ prom_port }}"
+ingress_port="{{ ingress_port }}"
+# id under /dev/disk/by-id/
+dev_k8s_nbd_idlocal="{{ dev_k8s_nbd_idlocal }}"
+
+[bastione]
+{{ deploy_stage }}-bastion0e
+
+[bastionl]
+{{ deploy_stage }}-bastion0l
+
+[bastion:children]
+bastione
+
+[bastions]
+{% for host in tf_app__result.outputs.bastions.value %}
+{{ deploy_stage }}-bastion{{ loop.index - 1 }}l
+{% endfor %}
+
+[k8s_masters]
+{% for host in tf_app__result.outputs.k8s_masters.value %}
+{{ deploy_stage }}-master{{ loop.index - 1 }}
+{% endfor %}
+
+[k8s_workers]
+{% for host in tf_app__result.outputs.k8s_workers.value %}
+{{ deploy_stage }}-worker{{ loop.index - 1 }}
+{% endfor %}
+
+[ansibled:children]
+bastionl
+k8s_masters
+k8s_workers
+
+[kube_control_plane:children]
+k8s_masters
+
+[etcd:children]
+k8s_masters
+
+[kube_node:children]
+k8s_workers
+
+[calico_rr]
+
+[k8s_cluster:children]
+kube_control_plane
+kube_node
+calico_rr

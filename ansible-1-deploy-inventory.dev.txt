@@ -1,0 +1,73 @@
+[all]
+localhost ansible_host=127.0.0.1
+dev-bastion0e ansible_host=51.250.93.121
+dev-bastion0l ansible_host=192.168.33.20
+dev-master0 ansible_host=192.168.33.14  etcd_member_name=etcd0
+dev-worker0 ansible_host=192.168.33.11
+
+[all:vars]
+# ssh connect params
+ansible_ssh_user="ruser0"
+ansible_ssh_common_args="-F ansible-1-deploy-ssh.dev.config"
+# tf/os params
+var_priv_subnet="192.168.33.0/24"
+var_priv_proxy_addr="dev-bastion0l.srv.dev.local"
+var_priv_dns="192.168.33.2"
+http_proxy="http://dev-bastion0l.srv.dev.local:8888"
+https_proxy="http://dev-bastion0l.srv.dev.local:8888"
+# wireguard server params
+wg0srv_addr="192.168.133.1"
+wg0srv_port="51820"
+wg0srv_net="192.168.133.0/24"
+# k8s
+var_k8s_bastion="dev-bastion0l"
+var_k8s_cluster_master="dev-master0"
+# dns
+dns_zone_srv="srv.dev.local"
+dns_zone_k8s="k8s.dev.local"
+# app
+app_inner_port="31001"
+app_ext_url="http://62.84.112.65"
+prom_port="31501"
+ingress_port="32001"
+# id under /dev/disk/by-id/
+dev_k8s_nbd_idlocal="nbd0pool0"
+
+[bastione]
+dev-bastion0e
+
+[bastionl]
+dev-bastion0l
+
+[bastion:children]
+bastione
+
+[bastions]
+dev-bastion0l
+
+[k8s_masters]
+dev-master0
+
+[k8s_workers]
+dev-worker0
+
+[ansibled:children]
+bastionl
+k8s_masters
+k8s_workers
+
+[kube_control_plane:children]
+k8s_masters
+
+[etcd:children]
+k8s_masters
+
+[kube_node:children]
+k8s_workers
+
+[calico_rr]
+
+[k8s_cluster:children]
+kube_control_plane
+kube_node
+calico_rr

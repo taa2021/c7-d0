@@ -1,0 +1,7 @@
+---
+- name: configure resolver
+  ansible.builtin.template:
+    src: resolv.conf
+    dest: /etc
+  with_items:
+  - resolv.conf

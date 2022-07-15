@@ -1,0 +1,7 @@
+---
+
+- name: Install service
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages }}"

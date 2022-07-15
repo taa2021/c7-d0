@@ -1,0 +1,4 @@
+swapoff
+=========
+
+Disable swap

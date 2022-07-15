@@ -1,0 +1,15 @@
+---
+
+- name: planning Terraform App - {{ tf_app | replace(playbook_dir, '.') }} - {{ var_out__tfplan | replace(playbook_dir, '.') }}
+  ansible.builtin.terraform:
+    project_path: "{{ tf_app }}"
+    plan_file: "{{ var_out__tfplan }}"
+    state: planned
+    force_init: true
+    backend_config:
+      bucket: "{{ tf_s3_backend.outputs.bucket_name.value }}"
+      endpoint: "{{ tf_s3_backend.outputs.bucket_endpoint.value }}"
+      region: "{{ tf_s3_backend.outputs.bucket_region.value }}"
+      access_key: "{{ tf_s3_backend.outputs.access_key.value }}"
+      secret_key: "{{ tf_s3_backend.outputs.secret_key.value }}"
+      key: "stage-{{ deploy_stage }}.tfstate"

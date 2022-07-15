@@ -1,0 +1,16 @@
+---
+
+- name: set route
+  command: ip route add {{ wg0srv_net }} via {{ hostvars[var_k8s_bastion].ansible_host }}
+  ignore_errors: yes
+  when: inventory_hostname != var_k8s_bastion
+
+- name: set a masquerade iptable rule
+  ansible.builtin.iptables:
+    table: nat
+    chain: POSTROUTING
+    out_interface: eth0
+    destination: "{{ wg0srv_net }}"
+    jump: MASQUERADE
+    comment: masquerade traffic to the private net
+  when: inventory_hostname != var_k8s_bastion

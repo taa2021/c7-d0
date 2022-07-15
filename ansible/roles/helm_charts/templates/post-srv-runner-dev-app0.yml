@@ -1,0 +1,32 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+
+kind: RunnerDeployment
+metadata:
+  name: runner-app0
+  namespace: actions-runner-app0
+spec:
+  template:
+    spec:
+      repository: "{{ dev_app0_github_repo }}"
+---
+apiVersion: actions.summerwind.dev/v1alpha1
+
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: runner-app0-autoscaler
+  namespace: actions-runner-app0
+spec:
+  minReplicas: 1
+  maxReplicas: 3
+  scaleTargetRef:
+    name: runner-app0
+#    namespace: actions-runner-app0
+    # Uncomment the below in case the target is not RunnerDeployment but RunnerSet
+    #kind: RunnerSet
+  scaleUpTriggers:
+  - githubEvent:
+      checkRun:
+        types: ["created"]
+        status: "queued"
+    amount: 1
+    duration: "5m"

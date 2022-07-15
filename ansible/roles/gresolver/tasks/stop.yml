@@ -1,0 +1,7 @@
+---
+
+- name: Stop service
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: stopped
+  with_items: "{{ services }}"

@@ -1,0 +1,4 @@
+---
+
+- name: disable swap
+  include_tasks: disable.yml

@@ -1,0 +1,23 @@
+---
+
+- name: Install fw packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - firewalld
+
+
+- name: permit traffic in default zone for ssh service
+  firewalld:
+    service: ssh
+    permanent: yes
+    zone: public
+    state: enabled
+
+- name: permit traffic in default zone for proxy service
+  firewalld:
+    port: 8888/tcp
+    permanent: yes
+    zone: public
+    state: enabled

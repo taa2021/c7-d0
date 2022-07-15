@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: monitoring
+  name: {{ item }}
+binaryData:
+  {{ item }}.json: "{{ lookup('file', item + '.json') | string | b64encode }}"

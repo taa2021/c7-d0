@@ -1,0 +1,36 @@
+# ----------------------------
+# init
+deploy_stage: "{{ inventory_file | regex_replace('^(.*)\\.([^.]+)(\\.txt)$','\\2') | default('dev') }}"
+
+# ----------------------------
+# output:
+var_out__inventory_file: "{{ playbook_dir }}/ansible-1-deploy-inventory.{{ deploy_stage }}.txt"
+var_out__inventory_ssh_config: "{{ playbook_dir }}/ansible-1-deploy-ssh.{{ deploy_stage }}.config"
+var_out__tfplan: "{{ playbook_dir }}/ansible-0-provision.{{ deploy_stage }}.tfplan"
+
+# ----------------------------
+# input: terraform
+ssh_login_default: ruser0
+ssh_pub_key_default:  "{{ lookup('file', 'in/ssh_pub_key_default') | quote }}"
+
+tf_app: "{{ playbook_dir }}/tf/live/{{ deploy_stage }}/app"
+
+yc_cloud_id:  b1gjilr27b0mqp90rj46
+yc_folder_id: b1gjo8k8qajfr6ftho2n
+
+yc_subnet: "192.168.33.0/24"
+
+wg0srv_addr: 192.168.133.1
+wg0srv_port: 51820
+wg0srv_net:  192.168.133.0/24
+
+
+dns_zone_srv: "srv.{{ deploy_stage }}.local."
+dns_zone_k8s: "k8s.{{ deploy_stage }}.local."
+dns_bastion0_aliases: "mons,prom-dev,loki-dev,loki-srv,prom-srv"
+app_inner_port: 31001
+prom_port: 31501
+ingress_port: 32001
+
+dev_k8s_nbd_size: 20 #GB
+dev_k8s_nbd_idlocal: nbd0pool0

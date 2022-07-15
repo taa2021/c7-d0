@@ -1,7 +1,0 @@
----
-
-- name: Uninstall service
-  ansible.builtin.package:
-    name: "{{ item }}"
-    state: absent
-  with_items: "{{ packages }}"

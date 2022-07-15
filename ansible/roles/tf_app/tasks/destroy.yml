@@ -1,0 +1,7 @@
+---
+
+- name: destroying Terraform App - {{ tf_app | replace(playbook_dir, '.') }}
+  ansible.builtin.terraform:
+    project_path: "{{ tf_app }}"
+    #force_init: true
+    state: absent

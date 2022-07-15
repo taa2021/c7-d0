@@ -1,0 +1,9 @@
+---
+
+# the os packages for service
+packages:
+- snapd
+
+# the system services for service
+services:
+- snapd

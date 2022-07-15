@@ -1,47 +1,59 @@
 
-PLAY [SF ansible tasks - provision] *********************************************************************************************************************************************************************************************************
+PLAY [Checkings...] ************************************************************
 
-TASK [Gathering Facts] **********************************************************************************************************************************************************************************************************************
+TASK [deploy_stage_checking : current stage: dev] ******************************
+Pausing for 7 seconds
+(ctrl+C then 'C' = continue early, ctrl+C then 'A' = abort)
+[[[KPress 'C' to continue the play or 'A' to abort 
 ok: [localhost]
 
-TASK [tf_s3_backend : Provision Terraform S3 backend] ***************************************************************************************************************************************************************************************
+PLAY [SF ansible tasks - provision] ********************************************
+
+TASK [Gathering Facts] *********************************************************
 ok: [localhost]
 
-TASK [tf_s3_backend : Debug print S3 backend bucket name] ***********************************************************************************************************************************************************************************
+TASK [tf_s3_backend : provision Terraform S3 backend] **************************
+ok: [localhost]
+
+TASK [tf_s3_backend : debug print S3 backend bucket name] **********************
 ok: [localhost] => {
-    "msg": "bucket--5d4d28d5029b2859"
+    "msg": "bucket--b0f3da30cc448491"
 }
 
-TASK [tf_app : Provision Terraform App] *****************************************************************************************************************************************************************************************************
+TASK [tf_app : planning Terraform App - ./tf/live/dev/app - ./ansible-0-provision.dev.tfplan] ***
 ok: [localhost]
 
-TASK [tf_app : Out inventory file] **********************************************************************************************************************************************************************************************************
+TASK [tf_app : check plan: /home/avatar/dev/c7-d0/ansible-0-provision.dev.tfplan] ***
+Pausing for 300 seconds
+(ctrl+C then 'C' = continue early, ctrl+C then 'A' = abort)
+[[[KPress 'C' to continue the play or 'A' to abort 
 ok: [localhost]
 
-TASK [tf_app : Out inventory ssh config] ****************************************************************************************************************************************************************************************************
+TASK [tf_app : provision Terraform App - ./tf/live/dev/app] ********************
+changed: [localhost]
+
+TASK [tf_app : out inventory file - ./ansible-1-deploy-inventory.dev.txt] ******
+changed: [localhost]
+
+TASK [tf_app : out inventory ssh config - ./ansible-1-deploy-ssh.dev.config] ***
 ok: [localhost]
 
-TASK [tf_app : Debug print cloud hosts] *****************************************************************************************************************************************************************************************************
+TASK [tf_app : debug print external app access params] *************************
 ok: [localhost] => {
-    "msg": [
-        {
-            "addr-ext": "51.250.76.201",
-            "addr-int": "192.168.1.12",
-            "id": "fhmcoumlm03m4i6vvlgr"
-        },
-        {
-            "addr-ext": "-",
-            "addr-int": "192.168.1.5",
-            "id": "fhmedk34m207fj80o9te"
-        },
-        {
-            "addr-ext": "-",
-            "addr-int": "192.168.1.13",
-            "id": "fhm0imefl1ic95j5ck07"
-        }
-    ]
+    "msg": {
+        "addr": "62.84.112.65",
+        "port": 80
+    }
 }
 
-PLAY RECAP **********************************************************************************************************************************************************************************************************************************
-localhost                  : ok=7    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+PLAY [SF ansible tasks - kubespray sync git repo] ******************************
+
+TASK [Gathering Facts] *********************************************************
+ok: [localhost]
+
+TASK [git-kubespray : Git checkout kubespray] **********************************
+ok: [localhost]
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=12   changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 

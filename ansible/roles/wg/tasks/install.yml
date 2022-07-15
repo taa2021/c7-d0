@@ -1,0 +1,78 @@
+---
+
+- name: Check config
+  stat:
+    path: /etc/wireguard/wg0.conf
+  register: wg0conf
+
+- name: Set ip4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Set arp_ignore=1
+  sysctl:
+    name: net.ipv4.conf.all.arp_ignore
+    value: '1'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Set arp_announce=2
+  sysctl:
+    name: net.ipv4.conf.all.arp_announce
+    value: '2'
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: Install packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ packages }}"
+
+- name: Generate keys
+  when: not wg0conf.stat.exists
+  args:
+    chdir: /etc/wireguard/
+  shell: |
+    # set -e -o pipefail
+    umask 0277
+    wg genkey | tee privatekey | wg pubkey | tee publickey
+
+- name: Check keys - pub
+  command: cat publickey
+  args:
+    chdir: /etc/wireguard/
+  changed_when: false
+  register: wg0publickey
+
+- name: Check keys - priv
+  command: cat privatekey
+  args:
+    chdir: /etc/wireguard/
+  no_log: yes
+  changed_when: false
+  register: wg0privatekey
+
+- name: Set the facts - wg0pubkey
+  set_fact:
+    wg0pubkey:  "{{ wg0publickey.stdout }}"
+    wg0privkey: "{{ wg0privatekey.stdout }}"
+  no_log: yes
+
+- name: Out server params
+  debug: msg="eaddr - {{ hostvars[inventory_hostname].ansible_host }}, laddr - {{ wg0srv_addr }}, port - {{ wg0srv_port }}, pubkey - {{ wg0pubkey }}"
+
+- name: Template a file to "{{ package_conf_file }}"
+  ansible.builtin.template:
+    src: wg0.conf.j2
+    dest: "{{ package_conf_file }}"
+    owner: root
+    group: root
+    mode: '0600'
+  when: not wg0conf.stat.exists

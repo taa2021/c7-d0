@@ -1,0 +1,16 @@
+---
+
+# config file
+#package_conf_file: /etc/tinyproxy/tinyproxy.conf
+
+microk8s_channel: 1.24/stable
+#helm_channel: 3.7/stable
+
+# the os packages for service
+packages:
+- snapd
+- git
+
+# the system services for service
+services:
+- snapd

@@ -1,0 +1,9 @@
+---
+
+disks:
+- "/dev/disk/by-id/virtio-{{ dev_k8s_nbd_idlocal }}"
+
+packages:
+- lvm2
+
+vg_drbdpool: drbdpool

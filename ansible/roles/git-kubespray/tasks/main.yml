@@ -1,0 +1,9 @@
+---
+
+- name: Git checkout kubespray
+  delegate_to: localhost
+  ansible.builtin.git:
+    repo: 'https://github.com/kubernetes-sigs/kubespray.git'
+    clone: yes
+    dest: "{{ playbook_dir }}/ansible/kubespray"
+    version: "{{ kubespray_version }}"

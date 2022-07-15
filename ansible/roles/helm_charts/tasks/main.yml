@@ -1,0 +1,509 @@
+---
+
+- name: Create a k8s namespace - srv cluster
+  kubernetes.core.k8s:
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+    name: "{{ item }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+  with_items:
+  - dev
+  - monitoring
+  - serve
+  - cert-manager
+  - actions-runner-system
+  - actions-runner-app0
+  - piraeus
+#  run_once: true
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Create a k8s PRE object - 0 - grafana datasources - srv cluster
+  kubernetes.core.k8s:
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+    state: present
+    template:
+      - path: "{{ item }}"
+  with_items:
+  - pre-srv-grafana-0.yml
+#  run_once: true
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Create a k8s PRE object - 1 - grafana dashboards - srv cluster
+  kubernetes.core.k8s:
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+    state: present
+    template:
+      - path: "pre-srv-grafana-1-templ.yml"
+  with_items:
+  - grafana-0-srv-nodeexport
+  - grafana-1-srv-log
+  - grafana-2-dev-log
+  - grafana-3-srv-k8s
+  - grafana-4-dev-k8s
+  - grafana-5-alert
+#  run_once: true
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+#- name: Deploy metallb chart - srv cluster
+#  kubernetes.core.helm:
+#    name: metallb
+#    chart_ref: bitnami/metallb
+#    release_namespace: metallb
+#    create_namespace: true
+#    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+##    state: absent
+#    values:
+#        configInline:
+#            address-pools:
+#            - name: ip-one
+#              protocol: layer2
+#              addresses:
+#              - 192.168.33.150-192.168.33.150
+#  ignore_errors: yes
+#  delegate_to: "{{ var_k8s_bastion }}"
+
+
+- name: Deploy nginx-ingress chart - srv cluster
+  kubernetes.core.helm:
+    name: nginx-ingress
+    chart_ref: bitnami/nginx-ingress-controller
+    release_namespace: nginx-ingress
+    create_namespace: true
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+        ingressClassResource:
+            default: true
+        service:
+            nodePorts:
+                http: "{{ ingress_port }}"
+    wait: yes
+#  run_once: true
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Deploy loki chart - logs on srv - srv cluster
+  kubernetes.core.helm:
+    name: grafana-loki
+    chart_ref: bitnami/grafana-loki
+    release_namespace: serve
+    create_namespace: true
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+      promtail:
+        enabled: true
+      gateway:
+        ingress:
+            enabled: false
+            hostname: "loki-srv.{{ dns_zone_srv }}"
+        enabled: true
+    wait: yes
+#  run_once: true
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Deploy kube-prometheus chart - mons for srv - srv cluster
+  kubernetes.core.helm:
+    name: kube-prometheus
+    chart_ref: bitnami/kube-prometheus
+    release_namespace: serve
+    create_namespace: true
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+        operator:
+            enabled: true
+        rbac:
+            create: false
+            pspEnabled: false
+        blackboxExporter:
+            enabled: true
+            configuration-disabled: |
+                modules:
+                    http_2xx:
+                        prober: http
+                        timeout: 5s
+                        debug: true
+                        http:
+                            preferred_ip_protocol: ip4
+                            # valid_status_codes: [200]  #default 2xx
+                            method: GET
+                            follow_redirects: true
+                            fail_if_not_ssl: false
+                            enable_http2: false
+                            debug: true
+        prometheus:
+            enabled: true
+            ingress:
+                enabled: true
+                hostname: "prom-srv.{{ dns_zone_srv }}"
+            additionalScrapeConfigs:
+                enabled: true
+                type: internal
+                internal:
+                  jobList:
+                  - job_name: 'blackbox-app0-ext'
+                    metrics_path: /probe
+                    params:
+                      module:  [ http_2xx ]
+                    static_configs:
+                      - targets: [ "{{ app_ext_url }}" ]
+                    relabel_configs:
+                      - source_labels: [ __address__ ]
+                        target_label: __param_target
+                      - source_labels: [ __param_target ]
+                        target_label: instance
+                      - target_label: __address__
+                        replacement: kube-prometheus-blackbox-exporter:19115
+#    wait: yes
+#  run_once: true
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Deploy loki chart - logs on dev - srv cluster
+  kubernetes.core.helm:
+    name: grafana-loki
+    chart_ref: bitnami/grafana-loki
+    release_namespace: dev
+    create_namespace: true
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+      promtail:
+        enabled: false
+      gateway:
+        ingress:
+            enabled: false
+            hostname: "loki-dev.{{ dns_zone_srv }}"
+        enabled: true
+    wait: yes
+#  run_once: true
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Deploy kube-prometheus chart - mons for dev - srv cluster
+  kubernetes.core.helm:
+    name: prometheus
+    chart_ref: prometheus-community/prometheus
+    release_namespace: dev
+    create_namespace: true
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+        kubeStateMetrics:
+            enabled: false
+        alertmanager:
+            enabled: false
+        alertmanagerFiles:
+            alertmanager.yml: ""
+        nodeExporter:
+            enabled: false
+        pushgateway:
+            enabled: false
+        server:
+            ingress:
+                enabled: true
+                hosts:
+                    - "prom-dev.{{ dns_zone_srv }}"
+#            extraArgs:
+#                storage.local.retention: 24h
+        serverFiles:
+#            alerts: ""
+#            rules: ""
+            prometheus.yml:
+                rule_files:
+                  - /etc/config/recording_rules.yml
+                  - /etc/config/alerting_rules.yml
+                  - /etc/config/rules
+                  - /etc/config/alerts
+                scrape_configs:
+                  - job_name: prometheus
+                    static_configs:
+                      - targets:
+                          - localhost:9090
+        prometheus:
+            enabled: true
+        extraScrapeConfigs: |
+                            - job_name: 'dev-cluster-collector'
+                              honor_labels: true
+                              metrics_path: /federate
+                              params:
+                                match[]:
+                                    - '{__name__=~".+"}'
+                              # scheme defaults to 'http'.
+                              static_configs:
+                              - targets: {{ lookup('inventory_hostnames', 'k8s_cluster', wantlist=True) | map('regex_replace', '$', '.'+dns_zone_k8s+':'+prom_port) }}
+    wait: yes
+#  run_once: true
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Deploy grafana chart - srv cluster
+  kubernetes.core.helm:
+    name: grafana
+    chart_ref: bitnami/grafana
+    release_namespace: monitoring
+    create_namespace: true
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+        datasources:
+            secretName: grafana-datasources-default
+        dashboardsProvider:
+            enabled: true
+        dashboardsConfigMaps:
+        - configMapName: grafana-0-srv-nodeexport
+          fileName: grafana-0-srv-nodeexport.json
+        - configMapName: grafana-1-srv-log
+          fileName: grafana-1-srv-log.json
+        - configMapName: grafana-2-dev-log
+          fileName: grafana-2-dev-log.json
+        - configMapName: grafana-3-srv-k8s
+          fileName: grafana-3-srv-k8s.json
+        - configMapName: grafana-4-dev-k8s
+          fileName: grafana-4-dev-k8s.json
+        - configMapName: grafana-5-alert
+          fileName: grafana-5-alert.json
+        admin:
+            password: "{{ grafana_admin_pass_default }}"
+        ingress:
+            enabled: true
+            hostname: "mons.{{ dns_zone_srv }}"
+        enabled: true
+    wait: yes
+#  run_once: true
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Deploy cert-manager chart - srv cluster
+  kubernetes.core.helm:
+    name: cert-manager
+    chart_ref: bitnami/cert-manager
+    release_namespace: cert-manager
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+      installCRDs: true
+    wait: yes
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Deploy github actions-runner-controller chart - srv cluster
+  kubernetes.core.helm:
+    name: actions-runner-controller
+    chart_ref: actions-runner-controller/actions-runner-controller
+    release_namespace: actions-runner-system
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+      metrics:
+        proxy:
+          enabled: false
+      authSecret:
+        create: true
+        github_app_id: "{{ github_runcontroller_app_id | trim }}"
+        github_app_installation_id: "{{ github_runcontroller_app_installation_id | trim }}"
+        github_app_private_key: "{{ github_runcontroller_app_private_key }}"
+    wait: yes
+#  run_once: true
+  retries: 3
+  delay: 30
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Deploy promtail chart - dev cluster
+  become: yes
+  kubernetes.core.helm:
+    name: promtail
+    chart_ref: grafana/promtail
+    release_namespace: monitoring
+    create_namespace: true
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+      config:
+        clients:
+          - url: "http://loki-dev.{{ dns_zone_srv }}:{{ ingress_port }}/loki/api/v1/push"
+            tenant_id: 2
+    wait: yes
+#  run_once: true
+  delegate_to: "{{ var_k8s_bastion }}"
+  when: inventory_hostname in lookup('inventory_hostnames', 'k8s_masters', wantlist=True)
+
+
+- name: Deploy kube-prometheus chart - dev cluster
+  kubernetes.core.helm:
+    name: kube-prometheus
+    chart_ref: bitnami/kube-prometheus
+    release_namespace: monitoring
+    create_namespace: true
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+        prometheus:
+#            ingress:
+#                enabled: true
+#                hostname: "prom.{{ dns_zone_k8s }}"
+            service:
+                externalTrafficPolicy: Local
+                type: NodePort
+                nodePorts:
+                    http: "{{ prom_port }}"
+
+    wait: yes
+#  run_once: true
+  delegate_to: "{{ var_k8s_bastion }}"
+  when: inventory_hostname in lookup('inventory_hostnames', 'k8s_masters', wantlist=True)
+
+
+- name: Deploy piraeus chart - dev cluster
+  kubernetes.core.helm:
+    name: piraeus
+    chart_ref: piraeus-operator/piraeus
+    release_namespace: piraeus
+    create_namespace: true
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+        etcd:
+            enabled: false
+        operator:
+            tolerations:
+            - key: node-role.kubernetes.io/control-plane # New value since Kubernetes 1.24
+              operator: Exists
+              effect: NoSchedule
+            - key: node-role.kubernetes.io/master
+              operator: Exists
+              effect: NoSchedule
+
+
+            controller:
+                tolerations:
+                - key: node-role.kubernetes.io/control-plane # New value since Kubernetes 1.24
+                  operator: Exists
+                  effect: NoSchedule
+                - key: node-role.kubernetes.io/master
+                  operator: Exists
+                  effect: NoSchedule
+
+                dbConnectionURL: k8s
+
+            csi:
+                controllerTolerations:
+                - key: node-role.kubernetes.io/control-plane # New value since Kubernetes 1.24
+                  operator: Exists
+                  effect: NoSchedule
+                - key: node-role.kubernetes.io/master
+                  operator: Exists
+                  effect: NoSchedule
+                nodeTolerations:
+                - key: node-role.kubernetes.io/control-plane # New value since Kubernetes 1.24
+                  operator: Exists
+                  effect: NoSchedule
+                - key: node-role.kubernetes.io/master
+                  operator: Exists
+                  effect: NoSchedule
+            satelliteSet:
+                tolerations:
+                - key: node-role.kubernetes.io/control-plane # New value since Kubernetes 1.24
+                  operator: Exists
+                  effect: NoSchedule
+                - key: node-role.kubernetes.io/master
+                  operator: Exists
+                  effect: NoSchedule
+
+#                automaticStorageType: LVM
+                kernelModuleInjectionImage: quay.io/piraeusdatastore/drbd9-focal:latest
+                storagePools:
+                    lvmPools:
+                    - name: lvm
+                      volumeGroup: "{{ dev_k8s_nbd_idlocal }}"
+                      devicePaths:
+    #                  - "/dev/disk/by-id/virtio-{{ dev_k8s_nbd_idlocal }}"
+                      - /dev/vdb
+    wait: yes
+#  run_once: true
+  delegate_to: "{{ var_k8s_bastion }}"
+  when: inventory_hostname in lookup('inventory_hostnames', 'k8s_masters', wantlist=True)
+
+
+- name: Wait for the port drbd-reactor to become open on the master
+  ansible.builtin.wait_for:
+    port: 9942
+    delay: 60
+    timeout: 300
+  run_once: true
+  delegate_to: dev-master0
+  when: inventory_hostname in lookup('inventory_hostnames', 'k8s_cluster', wantlist=True)
+
+
+- name: Check the linstor storage pool for the dev cluster
+  environment:
+    KUBECONFIG: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+  command: kubectl linstor --no-color storage-pool list
+  changed_when: false
+  delegate_to: "{{ var_k8s_bastion }}"
+  when: inventory_hostname in lookup('inventory_hostnames', 'dev-master0', wantlist=True)
+  register: dev_linstor_sp
+
+- debug: msg="{{ dev_linstor_sp.stdout.split('\n') }}"
+  when: inventory_hostname in lookup('inventory_hostnames', 'dev-master0', wantlist=True)
+
+
+- name: Create a k8s POST object - srv cluster
+  kubernetes.core.k8s:
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+    state: present
+    template:
+      - path: "{{ item }}"
+  with_items:
+  - post-srv-loki-srv.yml
+  - post-srv-loki-dev.yml
+  - post-srv-runner-dev-app0.yml
+#  run_once: true
+  when: inventory_hostname in lookup('inventory_hostnames', 'bastions', wantlist=True)
+
+
+- name: Create a k8s POST object - dev cluster
+  kubernetes.core.k8s:
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+    state: present
+    template:
+      - path: "{{ item }}"
+  with_items:
+  - post-dev-linstor.yml
+#  run_once: true
+  delegate_to: "{{ var_k8s_bastion }}"
+  when: inventory_hostname in lookup('inventory_hostnames', 'k8s_masters', wantlist=True)
+
+
+- name: Deploy postgresql chart - dev cluster
+  kubernetes.core.helm:
+    name: postgresql
+    chart_ref: bitnami/postgresql
+    release_namespace: app0
+    create_namespace: true
+    kubeconfig: "/var/spool/k8s/kube-{{ inventory_hostname }}/config"
+#    state: absent
+    values:
+        global:
+            storageClass: linstor-basic-storage
+        auth:
+            postgresPassword: "{{ dev_app0_db_pg_password | trim }}"
+            username: "{{ dev_app0_db_user | trim }}"
+            password: "{{ dev_app0_db_password | trim }}"
+            database: "{{ dev_app0_db_name | trim }}"
+#        architecture: replication
+#        replication:
+#            synchronousCommit: "on"
+#            numSynchronousReplicas: 2
+    wait: yes
+#  run_once: true
+  delegate_to: "{{ var_k8s_bastion }}"
+  when: inventory_hostname in lookup('inventory_hostnames', 'k8s_masters', wantlist=True)
+

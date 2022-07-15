@@ -1,0 +1,19 @@
+---
+
+- name: setup proxy settings
+  ansible.builtin.template:
+    src:  00-apt-proxy.conf.j2
+    dest: /etc/apt/apt.conf.d/00-apt-proxy.conf
+    owner: root
+    group: root
+    mode: '0640'
+  when: ansible_facts['distribution'] == "Ubuntu"
+
+- name: configure proxy
+  ansible.builtin.lineinfile:
+    path: /etc/yum.conf
+    state: present
+    regexp: "proxy="
+    insertafter: "[main]"
+    line: "proxy=http://{{ var_priv_proxy_addr }}:8888"
+  when: ansible_facts['distribution'] == "CentOS"

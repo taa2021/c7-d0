@@ -18,7 +18,7 @@
 
 | Name | Version |
 |------|---------|
-| random | 3.1.0 |
+| random | 3.3.2 |
 
 ## Modules
 
@@ -37,7 +37,7 @@
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | bucket-name | The s3-storage bucket name | `string` | `""` | no |
-| cloud-tags | The Terraform object's cloud tags/labels | `map(any)` | ```{ "environment": "dev", "terraform": true }``` | no |
+| cloud-tags | The Terraform object's cloud tags/labels | `map(any)` | ```{ "terraform": true }``` | no |
 | is-bucket-versioning | Predicate: is versioning enabled for the s3-storage bucket | `bool` | `true` | no |
 | yc\_cloud\_id | Yandex.Cloud ID default | `string` | n/a | yes |
 | yc\_folder\_id | Yandex.Cloud Folder ID default | `string` | n/a | yes |

@@ -1,11 +1,21 @@
+variable "deploy_stage" {
+  description = "Deploy stage"
+
+  type    = string
+  default = "dev"
+}
+
 variable "subnet" {
   description = "Yandex.Cloud zone default"
 
-  type    = string
-  default = "192.168.1.0/28"
+  type = string
 }
 
-#      ssh          = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAHvfDvfxMVMfxvWVHoVik+m7xVfUC7RpThrDJAFpkc6qQHM/n3CV8aPny8b5zG86F7vuV0RxlOOLJZPEBeHW4MnCLE9uH+8kssioLyBekF/N8poewkzeNMAsx+rXt8PmZuLqthhdvjJaC9FNuqmjDzermNPv9RXR7FOpC6kKk3KlOszyiL0+/dIenQzyz//DG2AsAnnB3zKDEGAg+Nyo2Z0NFmuRKHNa0D0ezFMB34FPjw7eyBoYb/UwX46ANmPdqZGsi13up3tOAZ/uZdyZ2ksJ90vXrxEwi8J+8kEoKi+UYNpAjYAb4KVuPG+7aNgorC6i0nYHHJ7JJnsHbbNY+28="
+variable "ssh_login_default" {
+  description = "The ssh login for the cloud hosts"
+
+  type = string
+}
 
 variable "ssh_pub_key_default" {
   description = "The ssh public key for the cloud hosts"
@@ -13,35 +23,110 @@ variable "ssh_pub_key_default" {
   type = string
 }
 
+variable "dev_k8s_nbd_size" {
+  description = "The k8s dev cluster drive's size"
 
-variable "hosts" {
+  type = number
+}
+
+variable "bastions" {
   description = "The setting templates for the cloud hosts"
 
   type = list(
     object({
       image-family = string
       has-eaddr    = bool
-      login        = string
+      mem          = number
+      ncpu         = number
   }))
 
   default = [
     {
       image-family = "ubuntu-2004-lts"
       has-eaddr    = true
-      login        = "ruser0"
-    },
-    {
-      image-family = "ubuntu-2004-lts"
-      has-eaddr    = false
-      login        = "ruser0"
-    },
-    {
-      image-family = "ubuntu-2004-lts"
-      has-eaddr    = false
-      login        = "ruser0"
+      mem          = 6
+      ncpu         = 4
     },
   ]
 }
+
+
+variable "k8s_masters" {
+  description = "The setting templates for the cloud hosts"
+
+  type = list(
+    object({
+      image-family = string
+      has-eaddr    = bool
+      mem          = number
+      ncpu         = number
+  }))
+
+  default = [
+    {
+      image-family = "ubuntu-2004-lts"
+      has-eaddr    = false
+      mem          = 4
+      ncpu         = 4
+    },
+  ]
+}
+
+
+variable "k8s_workers" {
+  description = "The setting templates for the cloud hosts"
+
+  type = list(
+    object({
+      image-family = string
+      has-eaddr    = bool
+      mem          = number
+      ncpu         = number
+  }))
+
+  default = [
+    {
+      image-family = "ubuntu-2004-lts"
+      has-eaddr    = false
+      mem          = 4
+      ncpu         = 4
+    },
+    #    {
+    #      image-family = "ubuntu-2004-lts"
+    #      has-eaddr    = false
+    #      mem          = 4
+    #      ncpu         = 4
+    #    },
+  ]
+}
+
+
+variable "dns_zone_k8s" {
+  description = "DNS-name of the k8s zone"
+
+  type = string
+}
+
+
+variable "dns_zone_srv" {
+  description = "DNS-name of the srv zone"
+
+  type = string
+}
+
+variable "dns_bastion0_aliases" {
+  description = "DNS-name of the cnames for the bastion0l host"
+
+  type = string
+}
+
+
+variable "app_inner_port" {
+  description = "The inner port on k8s nodes for the app"
+
+  type = number
+}
+
 
 
 variable "yc_iam_token" {

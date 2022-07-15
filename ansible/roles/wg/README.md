@@ -1,0 +1,5 @@
+wg
+=========
+
+Install wireguard server
+

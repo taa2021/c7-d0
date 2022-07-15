@@ -1,3 +1,5 @@
+ansible-galaxy collection install community.general
+
 # C4.D1 Задания D1.3.3, D1.7 (Итоговое задание)
 
 ## Задание

@@ -1,3 +1,0 @@
-
-docker_service_name: app0_front-end
-docker_service_replicas: 2

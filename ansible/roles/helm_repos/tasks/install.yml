@@ -1,0 +1,23 @@
+---
+
+- name: Add helm repo
+  kubernetes.core.helm_repository:
+    name: "{{ item.name }}"
+    repo_url: "{{ item.url }}"
+  with_items:
+  - { name: bitnami, url: https://charts.bitnami.com/bitnami }
+  - { name: grafana, url: https://grafana.github.io/helm-charts }
+  - { name: purelb, url: https://gitlab.com/api/v4/projects/20400619/packages/helm/stable }
+  - { name: prometheus-community, url: https://prometheus-community.github.io/helm-charts }
+  - { name: actions-runner-controller, url: https://actions-runner-controller.github.io/actions-runner-controller }
+  - { name: openebs, url: https://openebs.github.io/charts }
+  - { name: piraeus-operator, url: git+https://github.com/piraeusdatastore/piraeus-operator@charts?ref=v1.8.2&sparse=0&package=1&depupdate=0 }
+  - { name: sig-storage-local-static-provisioner, url: git+https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner@helm?ref=v2.4.0&sparse=0&package=1&depupdate=0 }
+#  - { name: storage-local-static-provisioner, url: https://flachesis.github.io/sig-storage-local-static-provisioner }
+
+- name: Update the repository cache
+  kubernetes.core.helm:
+    name: dummy
+    namespace: kube-system
+    state: absent
+    update_repo_cache: true

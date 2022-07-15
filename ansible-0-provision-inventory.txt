@@ -1,1 +1,0 @@
-localhost var_out__inventory_file="ansible-1-deploy-inventory.txt" var_out__inventory_ssh_config="ansible-1-deploy-ssh.config"

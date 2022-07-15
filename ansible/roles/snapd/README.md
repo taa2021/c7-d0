@@ -1,0 +1,4 @@
+snapd
+=========
+
+Install snapd

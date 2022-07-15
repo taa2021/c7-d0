@@ -1,0 +1,23 @@
+---
+
+- name: Install microk8s
+  snap:
+    classic: yes
+    channel: "{{ microk8s_channel }}"
+    name:
+    - microk8s
+
+- name: Configure microk8s addons
+  shell: |
+    microk8s.start
+    # microk8s disable ha-cluster --force
+    # sleep 120
+    while ! microk8s enable dns:{{ var_priv_dns }} hostpath-storage metrics-server; do sleep 10; microk8s.start; done
+    #while ! microk8s enable dns:{{ var_priv_dns }} hostpath-storage metrics-server metallb:192.168.33.150-192.168.33.150; do sleep 10; microk8s.start; done
+
+- name: Configure k8s config for microk8s
+  args:
+    warn: false
+  shell: |
+    mkdir ~/.kube >/dev/null 2>&1
+    microk8s config > ~/.kube/config

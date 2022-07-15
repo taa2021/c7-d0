@@ -1,0 +1,30 @@
+
+Host {{ tf_app__result.outputs.bastions.value[0]['addr-ext'] }}
+  User {{ ssh_login_default }}
+  Hostname {{ tf_app__result.outputs.bastions.value[0]['addr-ext'] }}
+  ProxyCommand none
+  PasswordAuthentication no
+  ForwardAgent yes
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+
+{% for host in tf_app__result.outputs.bastions.value %}
+Host {{ host['addr-int']  }}
+  User {{ ssh_login_default }}
+  ProxyCommand ssh -q -A -o ControlMaster=auto -o ControlPersist=60s -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -W %h:%p ruser0@{{ tf_app__result.outputs.bastions.value[0]['addr-ext'] }}
+
+{% endfor %}
+
+{% for host in tf_app__result.outputs.k8s_masters.value %}
+Host {{ host['addr-int']  }}
+  User {{ ssh_login_default }}
+  ProxyCommand ssh -q -A -o ControlMaster=auto -o ControlPersist=60s -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -W %h:%p ruser0@{{ tf_app__result.outputs.bastions.value[0]['addr-ext'] }}
+
+{% endfor %}
+
+{% for host in tf_app__result.outputs.k8s_workers.value %}
+Host {{ host['addr-int']  }}
+  User {{ ssh_login_default }}
+  ProxyCommand ssh -q -A -o ControlMaster=auto -o ControlPersist=60s -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -W %h:%p ruser0@{{ tf_app__result.outputs.bastions.value[0]['addr-ext'] }}
+
+{% endfor %}

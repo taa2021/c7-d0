@@ -1,0 +1,13 @@
+---
+
+# config file
+package_conf_file: /etc/wireguard/wg0.conf
+
+# the os packages for service
+packages:
+- wireguard
+- wireguard-tools
+
+# the system services for service
+services:
+- wg-quick@wg0

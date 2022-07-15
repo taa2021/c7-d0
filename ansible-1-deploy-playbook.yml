@@ -1,53 +1,83 @@
 ---
-- name: will wait till reachable
+- name: Checkings...
+  hosts: localhost
+  gather_facts: no # important
+#  vars:
+#    deploy_stage: "{{ inventory_file | regex_replace('^(.*)\\.([^.]+)(\\.txt)$','\\2') | default('dev') }}"
+  roles:
+    - deploy_stage_checking
+
+- name: Wait till reachable
   hosts: ansibled
-  remote_user: ruser0
   gather_facts: no # important
   roles:
     - wait_for
 
-- name: SF ansible tasks - setup bastion
-  hosts: bastion
-  remote_user: ruser0
+- name: Setup bastion
+  hosts: bastione
   become: true
   roles:
-    - proxy
     - gresolver
+    - proxy
+    - wg
 
-- name: SF ansible tasks - bootstrap
+- name: Bootstrap hosts
   hosts: ansibled
-  remote_user: ruser0
   become: true
   roles:
+    - gresolver
+    - hostname
+    - net_conf
+    - wg_route
     - proxified_pkg
     - common
+    - swapoff
 
-- name: SF ansible tasks - deploy docker
-  hosts: dmanagers, dworkers
-  remote_user: ruser0
+- name: Setup microk8s on srv (bastion)
+  hosts: bastionl
   become: true
   roles:
-    - docker
-    - proxified_docker
-#    - test
+    - snapd
+    - k8s_utils
+    - microk8s
+    - k8s_save_conf
+    - helm_repos
 
-- name: SF ansible tasks - setup docker swarm managers
-  hosts: dmanagers
-  remote_user: ruser0
+- name: Deploy cluster k8s (with kubespray)
+  become: true
+  ansible.builtin.import_playbook: ansible/kubespray/cluster.yml
+  vars:
+    cluster_name: "cluster.cl0.{{ dns_zone_k8s }}"
+    local_path_provisioner_enabled: true
+    local_path_provisioner_is_default_storageclass: false
+    local_volume_provisioner_enabled: true
+    local_volume_provisioner_use_node_name_only: false
+    metrics_server_enabled: true
+    metrics_server_kubelet_insecure_tls: true
+    metrics_server_metric_resolution: 15s
+    metrics_server_kubelet_preferred_address_types: "InternalIP"
+    nodelocaldns_external_zones:
+      - zones:
+        - "{{ dns_zone_srv }}"
+        - "{{ dns_zone_k8s }}"
+        nameservers:
+        - "{{ var_priv_dns }}"
+
+- name: SF ansible tasks - get k8s configs
+  hosts: bastionl,k8s_masters
   become: true
   roles:
-    - docker_manager
+    - k8s_save_conf
 
-- name: SF ansible tasks - setup docker swarm workers
-  hosts: dworkers
-  remote_user: ruser0
-  become: true
-  roles:
-    - docker_worker
+#- name: SF ansible tasks - prepare nbd storage
+#  hosts: k8s_masters, k8s_workers
+#  become: true
+#  roles:
+#    - nbd
 
-- name: SF ansible tasks - deploy docker swarm app
-  hosts: dmanagers
-  remote_user: ruser0
-  become: true
-  roles:
-    - docker_app0
+#- name: SF ansible tasks - setup k8s monitoring - srv
+#  hosts: bastion1l
+#  remote_user: ruser0
+#  become: true
+#  roles:
+#     - helm_ml

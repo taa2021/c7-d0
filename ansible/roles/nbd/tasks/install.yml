@@ -1,0 +1,13 @@
+---
+
+- name: Create a volume group {{ dev_k8s_nbd_idlocal }} and resize it the maximum possible
+  community.general.lvg:
+    vg: "{{ dev_k8s_nbd_idlocal }}"
+    pvs: "{{ disks }}"
+    pvresize: yes
+
+#- name: Create a thin volume
+#  community.general.lvol:
+#    vg: "{{ dev_k8s_nbd_idlocal }}"
+#    thinpool: thinpool
+#    size: 99%VG

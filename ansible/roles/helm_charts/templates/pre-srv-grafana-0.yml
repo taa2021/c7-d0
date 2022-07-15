@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  namespace: monitoring
+  name: grafana-datasources-default
+stringData:
+  default.yaml: |
+    apiVersion: 1
+
+    datasources:
+    - name: dev-loki
+      type: loki
+      uid: P2DD049CFB497F639
+      access: proxy
+      url: 'http://loki-dev.{{ dns_zone_srv }}:{{ ingress_port }}'
+      version: 1
+      editable: false
+      # editable: true
+    - name: srv-loki
+      type: loki
+      uid: P1A87EB67E75D483B
+      access: proxy
+      url: 'http://loki-srv.{{ dns_zone_srv }}:{{ ingress_port }}'
+      version: 1
+      editable: false
+      # editable: true
+    - name: dev-prometheus
+      type: prometheus
+      uid: P59CD305A14D7A37E
+      access: proxy
+      url: 'http://prom-dev.{{ dns_zone_srv }}:{{ ingress_port }}'
+      version: 1
+      editable: false
+      # editable: true
+    - name: srv-prometheus
+      type: prometheus
+      uid: P93AE6132CD3F214E
+      access: proxy
+      url: 'http://prom-srv.{{ dns_zone_srv }}:{{ ingress_port }}'
+      version: 1
+      editable: false
+      # editable: true

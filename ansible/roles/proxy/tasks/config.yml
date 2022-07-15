@@ -1,0 +1,21 @@
+---
+
+- name: configure proxy acl
+  ansible.builtin.lineinfile:
+    path: "{{ package_conf_file }}"
+    state: present
+    regexp: "^Allow {{ var_priv_subnet }}"
+    insertafter: "^Allow 127.0.0.1"
+    line: "Allow {{ var_priv_subnet }}"
+  notify:
+    - restart services
+
+- name: configure proxy listen
+  ansible.builtin.lineinfile:
+    path: "{{ package_conf_file }}"
+    state: present
+    regexp: "^Listen 0.0.0.0"
+    insertafter: "^#Listen 192.168.0.1"
+    line: "Listen 0.0.0.0"
+  notify:
+    - restart services

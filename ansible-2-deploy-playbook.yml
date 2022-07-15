@@ -1,0 +1,21 @@
+---
+
+- name: Checkings...
+  hosts: localhost
+  gather_facts: no # important
+  roles:
+    - deploy_stage_checking
+
+- name: Wait till reachable
+  hosts: ansibled
+  gather_facts: no # important
+  roles:
+    - wait_for
+
+- name: SF ansible tasks - setup k8s logging and monitoring, db, storage pool etc.
+  hosts: 
+    - bastions
+    - k8s_masters
+  become: true
+  roles:
+    - helm_charts

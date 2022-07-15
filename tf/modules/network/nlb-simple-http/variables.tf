@@ -19,10 +19,24 @@ variable "healthcheck-path" {
   default = "/"
 }
 
-variable "hosts-ids" {
+variable "hosts0-ids" {
   description = "The deployable network load balancer backend hosts' cloud IDs"
 
   type = list(string)
+}
+
+variable "hosts1-ids" {
+  description = "The deployable network load balancer backend hosts' cloud IDs (optional)"
+
+  type    = list(string)
+  default = []
+}
+
+variable "hosts2-ids" {
+  description = "The deployable network load balancer backend hosts' cloud IDs (optional)"
+
+  type    = list(string)
+  default = []
 }
 
 variable "cloud-tags" {

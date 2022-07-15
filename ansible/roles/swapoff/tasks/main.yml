@@ -1,0 +1,9 @@
+---
+
+- name: Comment swap fs in /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
+  notify:
+    - disable swap

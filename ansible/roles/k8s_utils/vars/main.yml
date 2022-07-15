@@ -1,0 +1,9 @@
+---
+
+k9s_ver: "v0.25.21"
+k9s_url: "https://github.com/derailed/k9s/releases/download/{{ k9s_ver }}/k9s_Linux_x86_64.tar.gz"
+
+# the os packages for service
+packages:
+- git
+- python3-pip

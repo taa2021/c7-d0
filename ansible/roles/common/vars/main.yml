@@ -1,0 +1,28 @@
+---
+
+# the os packages
+
+packages:
+- ca-certificates
+- curl
+- python3
+- gnupg
+- tmux
+- git
+- lvm2
+
+packages_CentOS:
+- redhat-lsb-core
+#- glibc-langpack-ru
+#- glibc-locale-source
+
+packages_Ubuntu:
+- lsb-release
+- language-pack-ru
+- htop
+- jq
+
+packages_AlmaLinux:
+- redhat-lsb-core
+#- glibc-langpack-ru
+#- glibc-locale-source

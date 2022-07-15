@@ -1,9 +1,0 @@
----
-- name: SF ansible tasks - deploy
-  hosts: bastion
-  remote_user: ruser0
-  become: true
-  gather_facts: no # important
-
-  roles:
-    - test

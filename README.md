@@ -1,5 +1,3 @@
-ansible-galaxy collection install community.general
-
 # ДИПЛОМНЫЙ ПРОЕКТ (HW-04)
 
 ## Задание

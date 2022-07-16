@@ -78,7 +78,8 @@ git push --tags
 8. Итоги развертывания:
 - скриншот работающего сайта прикладного приложения - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/app0_web_2022-07-16_01-58-12.png);
 - ход развертывания серверов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/ansible-0-provision-apply.log);
-- ход настройки серверов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/ansible-1-deploy-apply.log).
+- ход настройки серверов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/ansible-1-deploy-apply.log);
+- ход настройки кластеров - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/ansible-2-deploy-apply.log).
 
 9. Скриншоты подтверждения:
 
@@ -92,7 +93,7 @@ git push --tags
 	1. Графана, настройка уведомления критерия "Свободное место подсистемы хранения в прикладном кластере" - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_dev-00-pool-free_2022-07-16_01-31-20.png?raw=true)
 	1. Графана, настройка уведомления критерия "Отклик сайта прикладного приложения" - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_dev-01-app0-response-time_2022-07-16_01-32-04.png?raw=true)
 	1. Графана, настройка уведомления критерия "Код возврата сайта прикладного приложения" - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_dev-02-app0-status-code_2022-07-16_01-32-37.png?raw=true)
-	1. Графана, панель Alert - перечень наблюдаемых критериев - [здесь]('https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts(pannel)_2022-07-16_01-25-21.png?raw=true')
+	1. Графана, панель Alert - перечень наблюдаемых критериев - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_pannel_2022-07-16_01-25-21.png?raw=true)
 	1. Графана, настройка уведомления критерия "Свободное место на сервере srv"  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_srv-00-fs-free_2022-07-16_01-33-24.png?raw=true)
 	1. k9s, прикладной кластер, описание pod прикладного приложения с отображением версии (репозиторий, тег/версия) образа контейнера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/app0_pod_container_image_and_tag__2022-07-16_02-22-25.png?raw=true)
 	1. Сайт прикладного приложения - открывается - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/app0_web_2022-07-16_01-58-12.png?raw=true)

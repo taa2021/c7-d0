@@ -75,13 +75,13 @@ git push --tags
 
 ```
 
-## Итоги развертывания:
+## Итоги развертывания
 - скриншот работающего сайта прикладного приложения - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/app0_web_2022-07-16_01-58-12.png);
 - ход развертывания серверов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/ansible-0-provision-apply.log);
 - ход настройки серверов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/ansible-1-deploy-apply.log);
 - ход настройки кластеров - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/ansible-2-deploy-apply.log).
 
-## Скриншоты подтверждения:
+## Скриншоты подтверждения
 
 1. Графана - добавление шаблона уведомления  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_message_template_2022-07-16_01-34-38.png?raw=true)
 1. Графана, панель ("дашборд") Alert - пред-уведомительный режим при сработке критерия  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_on_app_crash_0__2022-07-16_01-47-03.png?raw=true)

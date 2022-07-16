@@ -75,57 +75,54 @@ git push --tags
 
 ```
 
-8. Итоги развертывания:
+## Итоги развертывания:
 - скриншот работающего сайта прикладного приложения - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/app0_web_2022-07-16_01-58-12.png);
 - ход развертывания серверов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/ansible-0-provision-apply.log);
 - ход настройки серверов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/ansible-1-deploy-apply.log);
 - ход настройки кластеров - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/ansible-2-deploy-apply.log).
 
-9. Скриншоты подтверждения:
+## Скриншоты подтверждения:
 
-	1. Графана - добавление шаблона уведомления  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_message_template_2022-07-16_01-34-38.png?raw=true)
-	1. Графана, панель ("дашборд") Alert - пред-уведомительный режим при сработке критерия  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_on_app_crash_0__2022-07-16_01-47-03.png?raw=true)
-	1. Графана, раздел уведомлений - пред-уведомительный режим при сработке критерия - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_on_app_crash_1__2022-07-16_01-47-40.png?raw=true)
-	1. Графана, панель Alert - уведомтельный режим при сработке критерия [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_on_app_crash_2__2022-07-16_01-49-37.png?raw=true)
-	1. Телеграмм, сработавшие примеры уведомлений о сработке критерия и восстановлени штатного режима - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_on_app_crash_3__telegram__2022-07-16_01-55-41.png?raw=true)
-	1. Графана, настройка Телеграмм - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_telegram_2022-07-16_01-35-10.png?raw=true)
-	1. Графана, раздел уведомлений - перечень настроенных уведомлений согласно притериям [задания](./TASK.md) - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_all_2022-07-16_01-30-43.png?raw=true)
-	1. Графана, настройка уведомления критерия "Свободное место подсистемы хранения в прикладном кластере" - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_dev-00-pool-free_2022-07-16_01-31-20.png?raw=true)
-	1. Графана, настройка уведомления критерия "Отклик сайта прикладного приложения" - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_dev-01-app0-response-time_2022-07-16_01-32-04.png?raw=true)
-	1. Графана, настройка уведомления критерия "Код возврата сайта прикладного приложения" - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_dev-02-app0-status-code_2022-07-16_01-32-37.png?raw=true)
-	1. Графана, панель Alert - перечень наблюдаемых критериев - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_pannel_2022-07-16_01-25-21.png?raw=true)
-	1. Графана, настройка уведомления критерия "Свободное место на сервере srv"  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_srv-00-fs-free_2022-07-16_01-33-24.png?raw=true)
-	1. k9s, прикладной кластер, описание pod прикладного приложения с отображением версии (репозиторий, тег/версия) образа контейнера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/app0_pod_container_image_and_tag__2022-07-16_02-22-25.png?raw=true)
-	1. Сайт прикладного приложения - открывается - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/app0_web_2022-07-16_01-58-12.png?raw=true)
-	1. Графана, панель наблюдения за состоянием прикладного кластера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/dev-kube_cluster_via_Prom_2022-07-16_01-15-04.png?raw=true?raw=true)
-	1. Графана, панель наблюдения логов - в частности здесь - прикладного приложения - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/dev-logs_2022-07-16_01-24-15.png?raw=true)
-	1. Github, actions, CI/CD workflow - доказательство сработки только для тегированных версий - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_0__2022-07-16_02-21-26.png?raw=true)
-	1. Github, actions, CI/CD workflow - общий вид с длительностью выполнения  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_1__2022-07-16_02-25-07.png?raw=true)
-	1. Github, actions, CI/CD workflow - доказательство размешения в реестре образов контейнеров образа прикладного приложения с конкретной версией (тегом), соответствующей версии приложения в репозитории github - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_2__2022-07-16_02-26-31.png?raw=true)
-	1. Github, actions, CI/CD workflow - доказательство использования при развертывании helm-chart версии (тэга) контейнера образа, "которая только что построена" и соответсвует версии приложения в репозитории github,- [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_3__2022-07-16_02-27-04.png?raw=true)
-	1. Github, отображение sefl-hosted runners - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_4__2022-07-16_02-28-47.png?raw=true)
-	1. Github, реестр образов контейнеров - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_5__2022-07-16_02-40-29.png?raw=true)
-	1. Github, раздел задания параметров с чувствительной информацией - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_6__2022-07-16_02-41-24.png?raw=true)
-	1. Github, раздел отображения тэгов (версий) прикладного приложения - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_7__2022-07-16_02-43-28.png?raw=true)
-	1. k9s, прикладной кластер, отображение узлов кластера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_dev_nodes_2022-07-16_02-45-58.png?raw=true)
-	1. k9s, прикладной кластер, перечень POD-ов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_dev_pods_2022-07-16_01-59-30.png?raw=true)
-	1. k9s, прикладной кластер, перечень PVC-ов кластера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_dev_pvc-0_2022-07-16_02-01-07.png?raw=true)
-	1. k9s, прикладной кластер, yaml-описание PVC для СУБД PostgreSQL - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_dev_pvc-1_2022-07-16_02-01-30.png?raw=true)
-	1. k9s, прикладной кластер, перечень service-ов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_dev_services_2022-07-16_02-00-27.png?raw=true)
-	1. k9s, обслуживающий кластер, перечень узлов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_srv_nodes_2022-07-16_02-45-06.png?raw=true)
-	1. k9s, обслуживающий кластер, перечень POD-ов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_srv_pods_2022-07-16_02-02-16.png?raw=true)
-	1. k9s, обслуживающий кластер, перечень service-ов стр.1 - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_srv_services-0_2022-07-16_02-03-27.png?raw=true)
-	1. k9s, обслуживающий кластер, перечень service-ов стр.2  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_srv_services-1_2022-07-16_02-03-48.png?raw=true)
-	1. Графана, перечень панелей (дашбордов) мониторинга - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/pannels_2022-07-16_01-26-51.png?raw=true)
-	1. Prometheus, обслуживающий кластер, экземпляр мониторинга прикладного кластера (экземпляр удаленного Prometheus штатно виден только по одному из возможных адресов - узлов кластера) - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/prom-dev.srv.dev.local_2022-07-16_02-06-33.png?raw=true)
-	1. Prometheus, обслуживающий кластер, экземпляр мониторинга обслуживающего кластера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/prom-srv.srv.dev.local_2022-07-16_02-06-03.png?raw=true)
-	1. Графана, перечень (автоподгруженных) источников - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/srv-datasources-0list_2022-07-16_02-16-13.png?raw=true)
-	1. Графана, обслуживающий кластер, панель мониторинга - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/srv-kube_cluster_via_Prom_2022-07-16_01-18-08.png?raw=true)
-	1. Графана, обслуживающий кластер, панель контроля логов обслуживающего кластера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/srv-logs_2022-07-16_01-22-56.png?raw=true)
-	1. Графана, обслуживающий кластер, панель наблюдения сервера srv (NodeExporterFull) - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/srv-NodeExporterFull_2022-07-16_01-21-49.png)
-
-  
-
+1. Графана - добавление шаблона уведомления  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_message_template_2022-07-16_01-34-38.png?raw=true)
+1. Графана, панель ("дашборд") Alert - пред-уведомительный режим при сработке критерия  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_on_app_crash_0__2022-07-16_01-47-03.png?raw=true)
+1. Графана, раздел уведомлений - пред-уведомительный режим при сработке критерия - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_on_app_crash_1__2022-07-16_01-47-40.png?raw=true)
+1. Графана, панель Alert - уведомтельный режим при сработке критерия [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_on_app_crash_2__2022-07-16_01-49-37.png?raw=true)
+1. Телеграмм, сработавшие примеры уведомлений о сработке критерия и восстановлени штатного режима - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_on_app_crash_3__telegram__2022-07-16_01-55-41.png?raw=true)
+1. Графана, настройка Телеграмм - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerting_telegram_2022-07-16_01-35-10.png?raw=true)
+1. Графана, раздел уведомлений - перечень настроенных уведомлений согласно притериям [задания](./TASK.md) - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_all_2022-07-16_01-30-43.png?raw=true)
+1. Графана, настройка уведомления критерия "Свободное место подсистемы хранения в прикладном кластере" - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_dev-00-pool-free_2022-07-16_01-31-20.png?raw=true)
+1. Графана, настройка уведомления критерия "Отклик сайта прикладного приложения" - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_dev-01-app0-response-time_2022-07-16_01-32-04.png?raw=true)
+1. Графана, настройка уведомления критерия "Код возврата сайта прикладного приложения" - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_dev-02-app0-status-code_2022-07-16_01-32-37.png?raw=true)
+1. Графана, панель Alert - перечень наблюдаемых критериев - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_pannel_2022-07-16_01-25-21.png?raw=true)
+1. Графана, настройка уведомления критерия "Свободное место на сервере srv"  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/alerts_srv-00-fs-free_2022-07-16_01-33-24.png?raw=true)
+1. k9s, прикладной кластер, описание pod прикладного приложения с отображением версии (репозиторий, тег/версия) образа контейнера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/app0_pod_container_image_and_tag__2022-07-16_02-22-25.png?raw=true)
+1. Сайт прикладного приложения - открывается - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/app0_web_2022-07-16_01-58-12.png?raw=true)
+1. Графана, панель наблюдения за состоянием прикладного кластера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/dev-kube_cluster_via_Prom_2022-07-16_01-15-04.png?raw=true?raw=true)
+1. Графана, панель наблюдения логов - в частности здесь - прикладного приложения - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/dev-logs_2022-07-16_01-24-15.png?raw=true)
+1. Github, actions, CI/CD workflow - доказательство сработки только для тегированных версий - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_0__2022-07-16_02-21-26.png?raw=true)
+1. Github, actions, CI/CD workflow - общий вид с длительностью выполнения  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_1__2022-07-16_02-25-07.png?raw=true)
+1. Github, actions, CI/CD workflow - доказательство размешения в реестре образов контейнеров образа прикладного приложения с конкретной версией (тегом), соответствующей версии приложения в репозитории github - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_2__2022-07-16_02-26-31.png?raw=true)
+1. Github, actions, CI/CD workflow - доказательство использования при развертывании helm-chart версии (тэга) контейнера образа, "которая только что построена" и соответсвует версии приложения в репозитории github,- [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_3__2022-07-16_02-27-04.png?raw=true)
+1. Github, отображение sefl-hosted runners - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_4__2022-07-16_02-28-47.png?raw=true)
+1. Github, реестр образов контейнеров - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_5__2022-07-16_02-40-29.png?raw=true)
+1. Github, раздел задания параметров с чувствительной информацией - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_6__2022-07-16_02-41-24.png?raw=true)
+1. Github, раздел отображения тэгов (версий) прикладного приложения - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/github-CI-CD_7__2022-07-16_02-43-28.png?raw=true)
+1. k9s, прикладной кластер, отображение узлов кластера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_dev_nodes_2022-07-16_02-45-58.png?raw=true)
+1. k9s, прикладной кластер, перечень POD-ов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_dev_pods_2022-07-16_01-59-30.png?raw=true)
+1. k9s, прикладной кластер, перечень PVC-ов кластера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_dev_pvc-0_2022-07-16_02-01-07.png?raw=true)
+1. k9s, прикладной кластер, yaml-описание PVC для СУБД PostgreSQL - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_dev_pvc-1_2022-07-16_02-01-30.png?raw=true)
+1. k9s, прикладной кластер, перечень service-ов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_dev_services_2022-07-16_02-00-27.png?raw=true)
+1. k9s, обслуживающий кластер, перечень узлов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_srv_nodes_2022-07-16_02-45-06.png?raw=true)
+1. k9s, обслуживающий кластер, перечень POD-ов - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_srv_pods_2022-07-16_02-02-16.png?raw=true)
+1. k9s, обслуживающий кластер, перечень service-ов стр.1 - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_srv_services-0_2022-07-16_02-03-27.png?raw=true)
+1. k9s, обслуживающий кластер, перечень service-ов стр.2  - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/k9s_srv_services-1_2022-07-16_02-03-48.png?raw=true)
+1. Графана, перечень панелей (дашбордов) мониторинга - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/pannels_2022-07-16_01-26-51.png?raw=true)
+1. Prometheus, обслуживающий кластер, экземпляр мониторинга прикладного кластера (экземпляр удаленного Prometheus штатно виден только по одному из возможных адресов - узлов кластера) - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/prom-dev.srv.dev.local_2022-07-16_02-06-33.png?raw=true)
+1. Prometheus, обслуживающий кластер, экземпляр мониторинга обслуживающего кластера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/prom-srv.srv.dev.local_2022-07-16_02-06-03.png?raw=true)
+1. Графана, перечень (автоподгруженных) источников - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/srv-datasources-0list_2022-07-16_02-16-13.png?raw=true)
+1. Графана, обслуживающий кластер, панель мониторинга - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/srv-kube_cluster_via_Prom_2022-07-16_01-18-08.png?raw=true)
+1. Графана, обслуживающий кластер, панель контроля логов обслуживающего кластера - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/srv-logs_2022-07-16_01-22-56.png?raw=true)
+1. Графана, обслуживающий кластер, панель наблюдения сервера srv (NodeExporterFull) - [здесь](https://github.com/taa2021/c7-d0/blob/main/out/screenshots/srv-NodeExporterFull_2022-07-16_01-21-49.png)
 
 ## Информация для проверки задания
 

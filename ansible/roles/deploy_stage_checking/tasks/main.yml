@@ -1,0 +1,8 @@
+---
+
+- name: "current stage: {{ deploy_stage }}"
+  ansible.builtin.pause:
+    seconds: 7
+#    prompt: "Make sure it's OK ({{ deploy_stage }})"
+  tags:
+    - always
